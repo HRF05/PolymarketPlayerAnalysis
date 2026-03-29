@@ -1,3 +1,0 @@
-C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/libpsl_src-populate.dir
-C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/ALL_BUILD.dir
-C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/ZERO_CHECK.dir
