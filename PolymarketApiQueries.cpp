@@ -100,7 +100,7 @@ std::unordered_map<std::string, double> PolymarketApiQueries::getTokenPrices(con
     std::unordered_map<std::string, double> prices;
     if(token_ids.empty()) return prices;
 
-    const size_t BATCH_SIZE = 50;
+    const size_t BATCH_SIZE = 25;
 
     thread_local cpr::Session session;
     session.SetUrl(cpr::Url{clob_base_url + "/prices"});
@@ -146,7 +146,7 @@ std::unordered_map<std::string, double> PolymarketApiQueries::getTokenPrices(con
 std::vector<UserPosition> PolymarketApiQueries::getUserPositions(const std::string& user_id) const{
     std::vector<UserPosition> ret;
     std::string last_id = "";
-    int positions_size = 50;
+    int positions_size = 1000;
 
 
     thread_local cpr::Session session;
@@ -156,7 +156,7 @@ std::vector<UserPosition> PolymarketApiQueries::getUserPositions(const std::stri
     while(true){
         std::string id_filter = last_id.empty() ? "" : "id_gt: \"" + last_id + "\", ";
         std::string graphql_query = R"(query getPL($user: String!){
-            userPositions(first: )" + std::to_string(positions_size) + R"(,orderBy: id, orderDirection: asc, where: { )" + id_filter + R"(user: $user }) {id realizedPnl tokenId amount avgPrice}})";
+            userPositions(first: )" + std::to_string(positions_size) + R"(,orderBy: id, orderDirection: asc, where: { )" + id_filter + R"(user: $user }){id realizedPnl tokenId amount avgPrice}})";
         nlohmann::json request_body = {
             {"query", graphql_query},
             {"variables", {{"user", user_id}}}
@@ -196,6 +196,62 @@ std::vector<UserPosition> PolymarketApiQueries::getUserPositions(const std::stri
 
     }
     return ret;
+}
+bool PolymarketApiQueries::isBotAccount(const std::string& user_id) const {
+    const size_t BURST_POSITION_COUNT = 20;
+    const uint64_t BURST_TIME_WINDOW_SEC = 2;
+    const size_t MACRO_POSITION_COUNT = 1000;
+    const uint64_t MACRO_TIME_WINDOW_SEC = 60*60*24*5;
+    
+    thread_local cpr::Session session;
+    session.SetUrl(cpr::Url{pnl_subgraph_url});
+    session.SetHeader(cpr::Header{{"Content-Type", "application/json"}});
+
+    std::string graphql_query = R"(query getBotSample($user: String!){
+        userPositions(first: 1000, orderBy: timestamp, orderDirection: desc, where: { user: $user }){timestamp}
+    })";
+    
+    nlohmann::json request_body = {
+        {"query", graphql_query},
+        {"variables", {{"user", user_id}}}
+    };
+    session.SetBody(cpr::Body{request_body.dump()});
+
+    cpr::Response r = executeWithRetry([](){ return session.Post(); }, [&](){applyRateLimit(goldsky_rate_mtx, last_goldsky_call, backoff_ms_goldsky);}, backoff_ms_goldsky, "goldsky-pnl");
+    
+    auto response = nlohmann::json::parse(r.text, nullptr, false);
+    if(response.is_discarded() || response.contains("errors") || !response.contains("data")) return false; // Default to human on network error
+
+    auto positions = response["data"]["userPositions"];
+    if(positions.empty()) return false;
+
+    std::vector<uint64_t> timestamps;
+    timestamps.reserve(positions.size());
+    for(const auto& pos : positions){
+        if(!pos["timestamp"].is_null()){
+            timestamps.push_back(std::stoull(pos["timestamp"].get<std::string>()));
+        }
+    }
+    if(timestamps.size() == 1000){
+        uint64_t newest_ts = timestamps.front();
+        uint64_t oldest_ts = timestamps.back();
+        
+        if((newest_ts - oldest_ts) <= MACRO_TIME_WINDOW_SEC){
+            return true;
+        }
+    }
+    if(timestamps.size() >= BURST_POSITION_COUNT){
+        for(size_t i = 0; i <= timestamps.size() - BURST_POSITION_COUNT; ++i){
+            uint64_t newest_ts = timestamps[i];
+            uint64_t oldest_ts = timestamps[i + BURST_POSITION_COUNT - 1];
+            
+            if((newest_ts - oldest_ts) <= BURST_TIME_WINDOW_SEC){
+                return true;
+            }
+        }
+    }
+    
+    return false;
 }
 
 std::vector<tradeEvent> PolymarketApiQueries::getMarketTradeHistory(const std::string& asset_id) const{

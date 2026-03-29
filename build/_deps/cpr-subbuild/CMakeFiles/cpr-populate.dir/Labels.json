@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/cpr-subbuild/CMakeFiles/cpr-populate"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/cpr-subbuild/CMakeFiles/d727ca1e7e2b6f70c72ff5e2b4c93f05/cpr-populate.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/cpr-subbuild/CMakeFiles/f4b2cd2870bc146deddb7c6f71863ffd/cpr-populate-complete.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/cpr-subbuild/CMakeFiles/2859fcfaee9f171111b5d076e61e7e2f/cpr-populate-build.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/cpr-subbuild/CMakeFiles/2859fcfaee9f171111b5d076e61e7e2f/cpr-populate-configure.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/cpr-subbuild/CMakeFiles/2859fcfaee9f171111b5d076e61e7e2f/cpr-populate-download.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/cpr-subbuild/CMakeFiles/2859fcfaee9f171111b5d076e61e7e2f/cpr-populate-install.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/cpr-subbuild/CMakeFiles/2859fcfaee9f171111b5d076e61e7e2f/cpr-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/cpr-subbuild/CMakeFiles/2859fcfaee9f171111b5d076e61e7e2f/cpr-populate-patch.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/cpr-subbuild/CMakeFiles/2859fcfaee9f171111b5d076e61e7e2f/cpr-populate-test.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/cpr-subbuild/CMakeFiles/2859fcfaee9f171111b5d076e61e7e2f/cpr-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"cpr-populate"
+		],
+		"name" : "cpr-populate"
+	}
+}

@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\CMakeFiles\1bd371145f3fada946f5b1eb0d149e98\PACKAGE_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{1429904E-D28C-3E12-AF2E-0FDA9E4FBEB9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

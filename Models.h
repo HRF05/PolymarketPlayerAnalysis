@@ -35,14 +35,14 @@ struct UserQueryTask {
 struct GammaTask {
     std::string user_id;
     double realized_pnl;
-    int total_positions;
+    size_t total_positions;
     std::vector<UserPosition> positions;
 };
 struct ClobTask {
     std::string user_id;
     double realized_pnl;
     double unrealized_pnl;
-    int total_positions;
+    size_t total_positions;
     std::vector<UserPosition> unresolved_positions;
 };
 
@@ -50,5 +50,6 @@ struct ClobTask {
 struct UserAnalysisResult {
     double realized = 0.0;
     double unrealized = 0.0;
-    int num_pos = 0;
+    size_t num_pos = 0;
+    bool is_bot = false;
 };

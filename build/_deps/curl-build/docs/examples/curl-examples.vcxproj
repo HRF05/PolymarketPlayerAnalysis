@@ -1,0 +1,622 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="MinSizeRel|x64">
+      <Configuration>MinSizeRel</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="RelWithDebInfo|x64">
+      <Configuration>RelWithDebInfo</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{0CBCA74D-DB44-3A40-8AE6-A34F7DA02791}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
+    <Platform>x64</Platform>
+    <ProjectName>curl-examples</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-src\include;C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\libpsl_src-install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-src\include;C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\libpsl_src-install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-src\include;C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\libpsl_src-install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-src\include;C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\libpsl_src-install\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-src\docs\examples\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/curl-src/docs/examples/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis -BC:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build --check-stamp-file C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/curl-build/docs/examples/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\Makefile.inc.cmake;C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-src\docs\examples\Makefile.inc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Building Custom Rule C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/curl-src/docs/examples/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis -BC:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build --check-stamp-file C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/curl-build/docs/examples/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\Makefile.inc.cmake;C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-src\docs\examples\Makefile.inc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">Building Custom Rule C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/curl-src/docs/examples/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis -BC:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build --check-stamp-file C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/curl-build/docs/examples/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\Makefile.inc.cmake;C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-src\docs\examples\Makefile.inc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='MinSizeRel|x64'">false</LinkObjects>
+      <Message Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">Building Custom Rule C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/curl-src/docs/examples/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis -BC:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build --check-stamp-file C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/curl-build/docs/examples/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\Makefile.inc.cmake;C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-src\docs\examples\Makefile.inc;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='RelWithDebInfo|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\ZERO_CHECK.vcxproj">
+      <Project>{9582F8D2-A029-3B92-965F-F721C8A815EC}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-10-at-a-time.vcxproj">
+      <Project>{DB6BFFAA-A1F4-337E-9E6D-8289DFC73DB3}</Project>
+      <Name>curl-example-10-at-a-time</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-address-scope.vcxproj">
+      <Project>{7A4E0EFA-7CA8-30AC-8952-2B902B000A0D}</Project>
+      <Name>curl-example-address-scope</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-altsvc.vcxproj">
+      <Project>{96BE7B5B-2784-358B-82E8-7F1843BA5736}</Project>
+      <Name>curl-example-altsvc</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-anyauthput.vcxproj">
+      <Project>{24CC3F58-01AB-3BA3-A207-E4DDDF846CD9}</Project>
+      <Name>curl-example-anyauthput</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-block_ip.vcxproj">
+      <Project>{D872B615-6CA7-3ABA-B34C-84A1B6E69AAE}</Project>
+      <Name>curl-example-block_ip</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-certinfo.vcxproj">
+      <Project>{D91CE016-A428-35DF-81E1-ACB53E8E4256}</Project>
+      <Name>curl-example-certinfo</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-chkspeed.vcxproj">
+      <Project>{8BD53580-50BA-363F-82ED-E9C75B938C46}</Project>
+      <Name>curl-example-chkspeed</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-connect-to.vcxproj">
+      <Project>{577B8C62-9F48-32D2-A0D3-126800DB82B7}</Project>
+      <Name>curl-example-connect-to</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-cookie_interface.vcxproj">
+      <Project>{ADA213C7-6D70-3E51-BA3A-98758DE2DC66}</Project>
+      <Name>curl-example-cookie_interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-debug.vcxproj">
+      <Project>{FED87D7A-E7C4-35C6-B7A8-DEC93193C648}</Project>
+      <Name>curl-example-debug</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-default-scheme.vcxproj">
+      <Project>{378F43BE-89C7-32A2-8D85-490F109F6DF1}</Project>
+      <Name>curl-example-default-scheme</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-externalsocket.vcxproj">
+      <Project>{C19ADA68-5710-3693-B31E-615BB7266332}</Project>
+      <Name>curl-example-externalsocket</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-fileupload.vcxproj">
+      <Project>{A8D4F1AD-B2CD-3397-A1AA-9B69A0314284}</Project>
+      <Name>curl-example-fileupload</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-ftp-wildcard.vcxproj">
+      <Project>{90E922B9-3681-32A1-BA40-067085D308D4}</Project>
+      <Name>curl-example-ftp-wildcard</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-ftpget.vcxproj">
+      <Project>{C45013E4-4505-3457-9D27-535D1B297B0A}</Project>
+      <Name>curl-example-ftpget</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-ftpgetinfo.vcxproj">
+      <Project>{4ACA11F1-768B-3977-AEE1-79B67AE42009}</Project>
+      <Name>curl-example-ftpgetinfo</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-ftpgetresp.vcxproj">
+      <Project>{0E7AB87F-638E-357D-840E-3B7680C1A3D7}</Project>
+      <Name>curl-example-ftpgetresp</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-ftpsget.vcxproj">
+      <Project>{E156DF41-78F3-3242-A15C-652CB69FDC34}</Project>
+      <Name>curl-example-ftpsget</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-ftpupload.vcxproj">
+      <Project>{63B7D14C-B7F5-3EFE-B19B-973ED9941582}</Project>
+      <Name>curl-example-ftpupload</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-ftpuploadfrommem.vcxproj">
+      <Project>{DFD94720-5675-3609-9998-965251956E01}</Project>
+      <Name>curl-example-ftpuploadfrommem</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-ftpuploadresume.vcxproj">
+      <Project>{9763D451-EE06-3962-B420-0918ED91F86F}</Project>
+      <Name>curl-example-ftpuploadresume</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-getinfo.vcxproj">
+      <Project>{4F34244A-2B1B-3DBB-A73A-07FB6C2645EE}</Project>
+      <Name>curl-example-getinfo</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-getinmemory.vcxproj">
+      <Project>{C60E65BF-5155-34A5-AF34-7BE1B86FCC45}</Project>
+      <Name>curl-example-getinmemory</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-getredirect.vcxproj">
+      <Project>{ECCB3107-3AD8-328B-A28E-C29DAA03DDE2}</Project>
+      <Name>curl-example-getredirect</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-getreferrer.vcxproj">
+      <Project>{69A5D1F3-C841-321D-88D4-2C581859DA65}</Project>
+      <Name>curl-example-getreferrer</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-headerapi.vcxproj">
+      <Project>{FF05B5F8-1B4B-3E52-832A-C6707634E110}</Project>
+      <Name>curl-example-headerapi</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-hsts-preload.vcxproj">
+      <Project>{CB152E7F-3136-3CEB-8BE6-6CE2811CBE02}</Project>
+      <Name>curl-example-hsts-preload</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-http-options.vcxproj">
+      <Project>{D88B63D9-D7E9-389E-A62F-73359EB94067}</Project>
+      <Name>curl-example-http-options</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-http-post.vcxproj">
+      <Project>{F9802FB5-2235-3CF1-9804-0568BB93DA1D}</Project>
+      <Name>curl-example-http-post</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-http2-download.vcxproj">
+      <Project>{F04B8BD0-72B7-3946-AEF4-C4AE91D665F4}</Project>
+      <Name>curl-example-http2-download</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-http2-pushinmemory.vcxproj">
+      <Project>{F3F2A6E6-C1E3-3037-972A-40FA59B6A8F1}</Project>
+      <Name>curl-example-http2-pushinmemory</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-http2-serverpush.vcxproj">
+      <Project>{3BC81AA8-CB81-3562-8F56-E1E0287960AA}</Project>
+      <Name>curl-example-http2-serverpush</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-http2-upload.vcxproj">
+      <Project>{BB26BBCA-316E-3CE3-836C-FA4FF27FCA3A}</Project>
+      <Name>curl-example-http2-upload</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-http3.vcxproj">
+      <Project>{EC9EE74B-6908-3958-93B3-968B084431F8}</Project>
+      <Name>curl-example-http3</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-http3-present.vcxproj">
+      <Project>{04EB588D-BC2E-3340-BA71-DEE873F1B9DD}</Project>
+      <Name>curl-example-http3-present</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-httpcustomheader.vcxproj">
+      <Project>{9C7585C1-9B01-36E7-803F-D731D7406F6A}</Project>
+      <Name>curl-example-httpcustomheader</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-httpput.vcxproj">
+      <Project>{485364D0-A284-391C-B4F1-4BC7AE042C47}</Project>
+      <Name>curl-example-httpput</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-httpput-postfields.vcxproj">
+      <Project>{38CC1AA8-7A33-3FD8-B52A-04F418B8FCA9}</Project>
+      <Name>curl-example-httpput-postfields</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-https.vcxproj">
+      <Project>{5EB930C5-2DB5-38DF-806E-CC08D66F9996}</Project>
+      <Name>curl-example-https</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-append.vcxproj">
+      <Project>{8689A2D5-62C7-3F1C-ABA1-3FDEBA656F4C}</Project>
+      <Name>curl-example-imap-append</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-authzid.vcxproj">
+      <Project>{4B41053C-D425-329E-931D-1B00A80305FB}</Project>
+      <Name>curl-example-imap-authzid</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-copy.vcxproj">
+      <Project>{2E5356EC-3392-36A2-BC8F-DF6572F75738}</Project>
+      <Name>curl-example-imap-copy</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-create.vcxproj">
+      <Project>{15909114-1976-3FB7-9F78-9F3973F4A906}</Project>
+      <Name>curl-example-imap-create</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-delete.vcxproj">
+      <Project>{E2DD31EF-8FD9-3D44-B364-B4F5F8FA034F}</Project>
+      <Name>curl-example-imap-delete</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-examine.vcxproj">
+      <Project>{D8B8F06B-E1F8-3125-B75C-4586FCAE2A04}</Project>
+      <Name>curl-example-imap-examine</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-fetch.vcxproj">
+      <Project>{A054FCAF-3BED-356A-8DD6-9864C9F480B0}</Project>
+      <Name>curl-example-imap-fetch</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-list.vcxproj">
+      <Project>{95C3AECC-7CAB-3616-8717-B7ED9A46DBD5}</Project>
+      <Name>curl-example-imap-list</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-lsub.vcxproj">
+      <Project>{D1F45A50-4E91-3132-8D8C-309395B93F88}</Project>
+      <Name>curl-example-imap-lsub</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-multi.vcxproj">
+      <Project>{F811E37C-9855-359D-99C8-01BC2DA4BDFC}</Project>
+      <Name>curl-example-imap-multi</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-noop.vcxproj">
+      <Project>{5762DBEA-2127-3AB4-8436-C09C4126F36D}</Project>
+      <Name>curl-example-imap-noop</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-search.vcxproj">
+      <Project>{0CE7CFAF-D449-32AA-B04F-EA58A0F03F89}</Project>
+      <Name>curl-example-imap-search</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-ssl.vcxproj">
+      <Project>{DFFE6F6C-D873-34C8-B4F9-9924CAB2B3FA}</Project>
+      <Name>curl-example-imap-ssl</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-store.vcxproj">
+      <Project>{58182A9C-C611-3B86-934A-B490A888B52F}</Project>
+      <Name>curl-example-imap-store</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-imap-tls.vcxproj">
+      <Project>{3249C25C-7D29-35EB-A9A2-1ABE87CC8AAD}</Project>
+      <Name>curl-example-imap-tls</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-interface.vcxproj">
+      <Project>{68D069D6-7C52-384D-AE90-DC1B4209F13C}</Project>
+      <Name>curl-example-interface</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-ipv6.vcxproj">
+      <Project>{D457048F-C0C5-3937-8D43-E12C247DD4CC}</Project>
+      <Name>curl-example-ipv6</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-keepalive.vcxproj">
+      <Project>{4FB4A82A-F06E-3CB4-A4F5-C9EFDEF39AC5}</Project>
+      <Name>curl-example-keepalive</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-localport.vcxproj">
+      <Project>{D22C3474-8711-3D09-A6E0-4394E22C7C08}</Project>
+      <Name>curl-example-localport</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-maxconnects.vcxproj">
+      <Project>{ED16249B-5286-370F-B72E-1534117E8F9B}</Project>
+      <Name>curl-example-maxconnects</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-multi-app.vcxproj">
+      <Project>{89420A75-5281-3302-A1DB-D30FBB9AC2C1}</Project>
+      <Name>curl-example-multi-app</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-multi-debugcallback.vcxproj">
+      <Project>{ACBD14B1-B591-3FEC-B0ED-BDF4FA36FB2C}</Project>
+      <Name>curl-example-multi-debugcallback</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-multi-double.vcxproj">
+      <Project>{8FEA3DE4-79DA-3D16-860F-60FE52ECC17F}</Project>
+      <Name>curl-example-multi-double</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-multi-formadd.vcxproj">
+      <Project>{5C556F3E-454A-37DE-99A8-562C422C11A1}</Project>
+      <Name>curl-example-multi-formadd</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-multi-legacy.vcxproj">
+      <Project>{783FECC8-4F7D-33CB-A5AA-E50A20530340}</Project>
+      <Name>curl-example-multi-legacy</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-multi-post.vcxproj">
+      <Project>{A5D53E62-005C-3991-B00F-9D787106E0F9}</Project>
+      <Name>curl-example-multi-post</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-multi-single.vcxproj">
+      <Project>{8309506B-545F-3171-A217-1BEB095A3222}</Project>
+      <Name>curl-example-multi-single</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-netrc.vcxproj">
+      <Project>{D2925366-D6E3-3916-A12B-20F0BED92223}</Project>
+      <Name>curl-example-netrc</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-parseurl.vcxproj">
+      <Project>{55CBE219-026E-30FC-95A8-25F117508AB3}</Project>
+      <Name>curl-example-parseurl</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-persistent.vcxproj">
+      <Project>{A2ACBDFC-79F3-3727-B325-82C048CDE15A}</Project>
+      <Name>curl-example-persistent</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-pop3-authzid.vcxproj">
+      <Project>{6CA64A7F-25A1-3A88-A6D8-44A345AA2EA3}</Project>
+      <Name>curl-example-pop3-authzid</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-pop3-dele.vcxproj">
+      <Project>{5807E059-B62E-3CD8-B223-DDC8D7615C7D}</Project>
+      <Name>curl-example-pop3-dele</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-pop3-list.vcxproj">
+      <Project>{FBE4F410-AC69-3B64-91E0-056B8AEEFA12}</Project>
+      <Name>curl-example-pop3-list</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-pop3-multi.vcxproj">
+      <Project>{0317868C-FC41-3774-91D6-D91F87394FC2}</Project>
+      <Name>curl-example-pop3-multi</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-pop3-noop.vcxproj">
+      <Project>{0AA305D3-63DB-3089-8CB8-3F5554E6D465}</Project>
+      <Name>curl-example-pop3-noop</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-pop3-retr.vcxproj">
+      <Project>{8B917214-3C73-3B13-BE33-D7F9078C3DAC}</Project>
+      <Name>curl-example-pop3-retr</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-pop3-ssl.vcxproj">
+      <Project>{933FA6C6-5D17-33FF-AF2F-ED2DD0CE1D49}</Project>
+      <Name>curl-example-pop3-ssl</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-pop3-stat.vcxproj">
+      <Project>{FCB793FA-2526-3BC2-A2DD-9DE97A60613F}</Project>
+      <Name>curl-example-pop3-stat</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-pop3-tls.vcxproj">
+      <Project>{A9C35CAB-47C1-3022-8D97-D0656D1716B1}</Project>
+      <Name>curl-example-pop3-tls</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-pop3-top.vcxproj">
+      <Project>{BB0C97DC-2408-3BC0-A10F-987E4EFC89CF}</Project>
+      <Name>curl-example-pop3-top</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-pop3-uidl.vcxproj">
+      <Project>{1372ED02-DF5C-3B2B-8FF3-D0A90C58BAF6}</Project>
+      <Name>curl-example-pop3-uidl</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-post-callback.vcxproj">
+      <Project>{90C62BD8-6D72-3D5D-B209-07B70A565A22}</Project>
+      <Name>curl-example-post-callback</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-postinmemory.vcxproj">
+      <Project>{5DCEC793-7362-361B-9CCD-77D10B48420C}</Project>
+      <Name>curl-example-postinmemory</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-postit2.vcxproj">
+      <Project>{EEAE8F3A-8BE3-3641-B106-6C25CFA556EA}</Project>
+      <Name>curl-example-postit2</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-postit2-formadd.vcxproj">
+      <Project>{D91655DC-5381-30AA-9885-A433D68798B1}</Project>
+      <Name>curl-example-postit2-formadd</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-progressfunc.vcxproj">
+      <Project>{9A6A4019-528F-3B1D-B266-DDFE7F4E081C}</Project>
+      <Name>curl-example-progressfunc</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-protofeats.vcxproj">
+      <Project>{63C1546E-3B32-3C4D-98A3-20DCF044783F}</Project>
+      <Name>curl-example-protofeats</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-range.vcxproj">
+      <Project>{5C287185-F021-3034-A3F1-D1F2DDAAA737}</Project>
+      <Name>curl-example-range</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-resolve.vcxproj">
+      <Project>{0D525695-3DD4-3AE0-9CE9-7C7E14383F4E}</Project>
+      <Name>curl-example-resolve</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-rtsp-options.vcxproj">
+      <Project>{B69F71E4-8ABF-37E3-8E17-7DCD7F8A53F2}</Project>
+      <Name>curl-example-rtsp-options</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-sendrecv.vcxproj">
+      <Project>{E698B992-7DE3-375B-BFB4-B06CEE6281F4}</Project>
+      <Name>curl-example-sendrecv</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-sepheaders.vcxproj">
+      <Project>{D25D8DD6-7BBB-32D3-9371-4E29D719D3A6}</Project>
+      <Name>curl-example-sepheaders</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-sftpget.vcxproj">
+      <Project>{5CE441C7-7A32-31C5-82BE-E52E8F7BC710}</Project>
+      <Name>curl-example-sftpget</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-sftpuploadresume.vcxproj">
+      <Project>{7EDA9A41-CF7A-33D4-94FD-B7147A537F74}</Project>
+      <Name>curl-example-sftpuploadresume</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-shared-connection-cache.vcxproj">
+      <Project>{D9472805-111A-30BD-A4D2-53CC6D8E5633}</Project>
+      <Name>curl-example-shared-connection-cache</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-simple.vcxproj">
+      <Project>{73348FF0-48A5-3464-8CA4-7B70307050D6}</Project>
+      <Name>curl-example-simple</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-simplepost.vcxproj">
+      <Project>{CC83EBA3-D24E-32CF-AD50-3F6B62F026A6}</Project>
+      <Name>curl-example-simplepost</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-simplessl.vcxproj">
+      <Project>{DC0E0880-7DA2-3FC9-BA3F-D87E440DA221}</Project>
+      <Name>curl-example-simplessl</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-smtp-authzid.vcxproj">
+      <Project>{F4BC7E42-5532-3244-85EB-C768A76D3262}</Project>
+      <Name>curl-example-smtp-authzid</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-smtp-expn.vcxproj">
+      <Project>{FAC6DC0E-D082-3892-BC4F-084075B05AA0}</Project>
+      <Name>curl-example-smtp-expn</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-smtp-mail.vcxproj">
+      <Project>{5CF103CF-E2A9-38D9-ABDA-4F58D7007D13}</Project>
+      <Name>curl-example-smtp-mail</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-smtp-mime.vcxproj">
+      <Project>{8E066AFC-67D5-322C-8D77-076AEDE19240}</Project>
+      <Name>curl-example-smtp-mime</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-smtp-multi.vcxproj">
+      <Project>{C4297CCA-AF36-3878-8E84-14965FEC1E11}</Project>
+      <Name>curl-example-smtp-multi</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-smtp-ssl.vcxproj">
+      <Project>{9D5A50F9-A407-38A9-A1AE-91E8D289EBBE}</Project>
+      <Name>curl-example-smtp-ssl</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-smtp-tls.vcxproj">
+      <Project>{8DDED20B-5268-39E5-A9E1-3F57F701A217}</Project>
+      <Name>curl-example-smtp-tls</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-smtp-vrfy.vcxproj">
+      <Project>{640D705B-4E17-3FAA-A14A-84AB82AF938F}</Project>
+      <Name>curl-example-smtp-vrfy</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-sslbackend.vcxproj">
+      <Project>{3DE5A064-9AEB-3504-B550-FEE9B81A9432}</Project>
+      <Name>curl-example-sslbackend</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-unixsocket.vcxproj">
+      <Project>{20F2D1AE-576F-34B7-A9DB-FF960D2C5D98}</Project>
+      <Name>curl-example-unixsocket</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-url2file.vcxproj">
+      <Project>{75D52323-BB07-38E9-9727-38FE5C9BA344}</Project>
+      <Name>curl-example-url2file</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-urlapi.vcxproj">
+      <Project>{4E28E531-9AB5-3762-A101-2CE419238B64}</Project>
+      <Name>curl-example-urlapi</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-websocket.vcxproj">
+      <Project>{C9F488C6-7D06-3DC7-8A1B-EABCD4F68943}</Project>
+      <Name>curl-example-websocket</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-build\docs\examples\curl-example-websocket-cb.vcxproj">
+      <Project>{BFAA9354-3286-30E6-AA2C-5DDCFC26138B}</Project>
+      <Name>curl-example-websocket-cb</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

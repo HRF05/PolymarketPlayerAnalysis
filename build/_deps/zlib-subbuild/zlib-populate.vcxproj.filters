@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\zlib-subbuild\CMakeFiles\d24bc7edd1b9e9792d4c742a02419553\zlib-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\zlib-subbuild\CMakeFiles\d24bc7edd1b9e9792d4c742a02419553\zlib-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\zlib-subbuild\CMakeFiles\d24bc7edd1b9e9792d4c742a02419553\zlib-populate-update.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\zlib-subbuild\CMakeFiles\d24bc7edd1b9e9792d4c742a02419553\zlib-populate-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\zlib-subbuild\CMakeFiles\d24bc7edd1b9e9792d4c742a02419553\zlib-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\zlib-subbuild\CMakeFiles\d24bc7edd1b9e9792d4c742a02419553\zlib-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\zlib-subbuild\CMakeFiles\d24bc7edd1b9e9792d4c742a02419553\zlib-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\zlib-subbuild\CMakeFiles\d24bc7edd1b9e9792d4c742a02419553\zlib-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\zlib-subbuild\CMakeFiles\90aeca1254f11d73c3a0f5ed52c15e45\zlib-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\zlib-subbuild\CMakeFiles\7eb9b8f778e58b3bfb34ebcdfe07c770\zlib-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\zlib-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\zlib-subbuild\CMakeFiles\zlib-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{6ACB2DC6-AAE1-3918-A48B-391462137ED3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

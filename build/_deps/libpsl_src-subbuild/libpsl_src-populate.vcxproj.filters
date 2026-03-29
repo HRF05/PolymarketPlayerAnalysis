@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\libpsl_src-subbuild\CMakeFiles\6ddfab09c0f64da1e369b9da168dfa90\libpsl_src-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\libpsl_src-subbuild\CMakeFiles\6ddfab09c0f64da1e369b9da168dfa90\libpsl_src-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\libpsl_src-subbuild\CMakeFiles\6ddfab09c0f64da1e369b9da168dfa90\libpsl_src-populate-update.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\libpsl_src-subbuild\CMakeFiles\6ddfab09c0f64da1e369b9da168dfa90\libpsl_src-populate-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\libpsl_src-subbuild\CMakeFiles\6ddfab09c0f64da1e369b9da168dfa90\libpsl_src-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\libpsl_src-subbuild\CMakeFiles\6ddfab09c0f64da1e369b9da168dfa90\libpsl_src-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\libpsl_src-subbuild\CMakeFiles\6ddfab09c0f64da1e369b9da168dfa90\libpsl_src-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\libpsl_src-subbuild\CMakeFiles\6ddfab09c0f64da1e369b9da168dfa90\libpsl_src-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\libpsl_src-subbuild\CMakeFiles\65c4a92927710059ff43bdb8badf279d\libpsl_src-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\libpsl_src-subbuild\CMakeFiles\91e08d8d82f2647f610497c501caccf1\libpsl_src-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\libpsl_src-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\libpsl_src-subbuild\CMakeFiles\libpsl_src-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{7711AF53-B9D8-3782-8AB4-B2EA3405B2E2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

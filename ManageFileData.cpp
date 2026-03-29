@@ -7,16 +7,15 @@
 #include <vector>
 #include <thread>
 
-void ManageFileData::usersFileAdd(const std::unordered_map<std::string, bool> &user_credible, const std::string &user_filename){
-    std::filesystem::create_directories("./data");
+void ManageFileData::usersFileAdd(const std::unordered_map<std::string, UserAnalysisResult> &user_result, const std::string &user_filename){
     std::string filename = "./data/users_temp_" + std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())) + ".csv";
     {
         std::ofstream file(filename);
         if (!file.is_open()) return; 
         
-        file << "user_id,credibility\n";
-        for (const auto& user : user_credible) {
-            file << user.first << "," << user.second << "\n";
+        file << "user_id,num_pos,realzied,unrealized\n";
+        for(const auto& user : user_result){
+            file << user.first << "," << user.second.num_pos << "," << user.second.realized << "," << user.second.unrealized << "\n";
         }
     }
     std::error_code ec;
@@ -28,25 +27,34 @@ void ManageFileData::usersFileAdd(const std::unordered_map<std::string, bool> &u
     return;
 }
 
-std::unordered_map<std::string, bool> ManageFileData::usersFileGet(const std::string &user_filename){
+std::unordered_map<std::string, UserAnalysisResult> ManageFileData::usersFileGet(const std::string &user_filename){
     std::ifstream file(user_filename);
     std::string line;
     std::getline(file, line);
-    std::unordered_map<std::string, bool> ret;
+    std::unordered_map<std::string, UserAnalysisResult> ret;
     while(std::getline(file, line)){
         if (line.empty()) continue;
-        size_t comma_pos = line.find(',');
-        if (comma_pos != std::string::npos) {
-            std::string user_id = line.substr(0, comma_pos);
-            bool credible = (line.substr(comma_pos + 1) == "1");
-            ret[user_id] = credible;
-        }
+        size_t start = 0;
+        size_t end = 0;
+
+        auto next_token = [&](){
+            end = line.find(',', start);
+            std::string token = line.substr(start, end - start);
+            start = end + 1;
+            return token;
+        };
+        std::string user_id = next_token();
+        size_t num_pos = static_cast<size_t>(std::stoull(next_token()));
+        double realized = std::stod(next_token());
+        double unrealized = std::stod(line.substr(start)); 
+        ret[user_id] = {realized, unrealized, num_pos};
     }
     return ret;
 }
 
-void ManageFileData::marketFileAdd(const std::vector<tradeEvent>& trades, const std::string& filename){
+void ManageFileData::marketFileAdd(const std::vector<tradeEvent>& trades, const std::string& asset_id){
     std::filesystem::create_directories("./data");
+    std::string filename = "./data/market-" + asset_id + ".csv";
     std::ofstream outFile(filename);
     if (!outFile.is_open()) {
         std::cerr << "\ncould not create file at " << filename << "\n";
@@ -90,6 +98,7 @@ std::vector<tradeEvent> ManageFileData::marketFileGet(const std::string& asset_i
         size_t end = 0;
 
         auto next_token = [&](){
+            end = line.find(',', start);
             std::string token = line.substr(start, end - start);
             start = end + 1;
             return token;

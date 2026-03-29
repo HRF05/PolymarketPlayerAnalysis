@@ -11,8 +11,13 @@ void UserStatsPipeline::startWorkers() {
             UserQueryTask task;
             while(goldsky_queue.wait_and_pop(task)){
                 try{
+                    if(api.isBotAccount(task.user_id)){
+                        finalizeUser(task.user_id, 0.0, 0.0, 0, false, true);
+                        continue;
+                    }
+
                     auto positions = api.getUserPositions(task.user_id);
-                    int total_positions_count = positions.size();
+                    size_t total_positions_count = positions.size();
                     double realized = 0.0;
                     std::vector<UserPosition> open_positions;
                     
@@ -125,10 +130,10 @@ UserStatsPipeline::~UserStatsPipeline() {
         if (w.joinable()) w.join();
     }
 }
-void UserStatsPipeline::finalizeUser(const std::string& user_id, double realized, double unrealized, int total_positions, bool is_error){
+void UserStatsPipeline::finalizeUser(const std::string& user_id, double realized, double unrealized, size_t total_positions, bool is_error, bool is_bot){
     {
         std::lock_guard<std::mutex> lock(results_mtx);
-        if(!is_error) final_results[user_id] = {realized, unrealized, total_positions}; 
+        if(!is_error) final_results[user_id] = {realized, unrealized, total_positions, is_bot}; 
     }
 
     int remaining = --active_tasks;
@@ -141,7 +146,7 @@ void UserStatsPipeline::finalizeUser(const std::string& user_id, double realized
 void UserStatsPipeline::processUsers(const std::vector<std::string>& users){
     if (users.empty()) return;
 
-    active_tasks += users.size();
+    active_tasks += static_cast<int>(users.size());
 
     for(const auto& u : users){
         goldsky_queue.push({u});

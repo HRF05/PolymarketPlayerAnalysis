@@ -1,0 +1,9 @@
+prefix=C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/libpsl_src-install
+includedir=${prefix}/include
+libdir=${prefix}/lib
+
+Name: libpsl
+Description: Public Suffix List C library
+Version: 0.21.5
+Libs: -L${libdir} -lpsl -lws2_32
+Cflags: -I${includedir} -DPSL_STATIC

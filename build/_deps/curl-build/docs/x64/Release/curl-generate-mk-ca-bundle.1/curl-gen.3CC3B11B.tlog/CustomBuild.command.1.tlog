@@ -1,0 +1,32 @@
+^C:\USERS\HENRY\ONEDRIVE\DOCUMENTS\POLYMARKETPLAYERANALYSIS\BUILD\CMAKEFILES\9929B315A0BDE33144645788CF17A252\MK-CA-BUNDLE.1.RULE
+setlocal
+cd C:\Users\henry\OneDrive\Documents\PolymarketPlayerAnalysis\build\_deps\curl-src\docs
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+C:\msys64\usr\bin\perl.exe C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/curl-src/scripts/cd2nroff mk-ca-bundle.md > C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/curl-build/docs/mk-ca-bundle.1
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\HENRY\ONEDRIVE\DOCUMENTS\POLYMARKETPLAYERANALYSIS\BUILD\CMAKEFILES\A31E53789D152F3BB4A03ED691D2A31B\CURL-GENERATE-MK-CA-BUNDLE.1.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\HENRY\ONEDRIVE\DOCUMENTS\POLYMARKETPLAYERANALYSIS\BUILD\_DEPS\CURL-SRC\DOCS\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis -BC:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build --check-stamp-file C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/curl-build/docs/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

@@ -38,7 +38,7 @@ public:
     void startWorkers();
 
     void processUsers(const std::vector<std::string>& users);
-    void finalizeUser(const std::string& user_id, double realized, double unrealized, int total_positions, bool is_error = false);
+    void finalizeUser(const std::string& user_id, double realized, double unrealized, size_t total_positions, bool is_error = false, bool is_bot = false);
     std::unordered_map<std::string, UserAnalysisResult> getPnlData() { std::lock_guard<std::mutex> lock(results_mtx); return final_results;}
     void clearResults() { std::lock_guard<std::mutex> lock(results_mtx); final_results.clear(); }
 };

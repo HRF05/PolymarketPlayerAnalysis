@@ -1,6 +1,7 @@
 #include "PolymarketApiQueries.h"
 #include "UserStatsPipeline.h"
 #include "ManageFileData.h"
+#include <unordered_map>
 #include <iostream>
 
 /*
@@ -19,21 +20,41 @@ trump # of tweets is between 0-19 from feb 27 to march 6: https://gamma-api.poly
 */
 int main() {
     try{
-        std::string asset_id = "89308404461300170915063446315611587250054643852836517235026678818761584555534";
-        std::string filename = "asset-trades-" + asset_id + ".csv";
+        std::string asset_id = "99186634638554651998743980431533134312247631653178164081175829567227353524421";
+
+        std::string user_filename = "data/users-cache.csv";
+
         PolymarketApiQueries api("config.json");
 
-        ManageFileData::marketFileAdd(api.getMarketTradeHistory(asset_id), filename);
-        std::vector<tradeEvent> trades = ManageFileData::marketFileGet(filename);
+        ManageFileData::marketFileAdd(api.getMarketTradeHistory(asset_id), asset_id);
+        std::vector<tradeEvent> trades = ManageFileData::marketFileGet(asset_id);
 
         UserStatsPipeline pipeline(api);
         
         std::cout<<"startWorkers\n";
         pipeline.startWorkers();
+        std::vector<std::string> test_users;
+        std::unordered_map<std::string, bool> seen;
+        for(const auto &trade : trades){
+            if(!seen[trade.maker_id]){
+                test_users.push_back(trade.maker_id);
+                seen[trade.maker_id] = true;
+            }
+            if(!seen[trade.taker_id]){
+                test_users.push_back(trade.taker_id);
+                seen[trade.taker_id] = true;
+            }
+        }
+        {
+            pipeline.processUsers(test_users);
+        }
         
-        std::vector<std::string> test_users = {"", ""};
-        pipeline.processUsers(test_users);
         
+
+        std::unordered_map<std::string, UserAnalysisResult> final_results = pipeline.getPnlData();
+
+        ManageFileData::usersFileAdd(final_results, user_filename);
+
     }
     catch(const std::exception& e){
         std::cerr << "Fatal error: " << e.what() << "\n";

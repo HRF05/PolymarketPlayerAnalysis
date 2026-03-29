@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/libpsl_src-populate"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/91e08d8d82f2647f610497c501caccf1/libpsl_src-populate.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/65c4a92927710059ff43bdb8badf279d/libpsl_src-populate-complete.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/6ddfab09c0f64da1e369b9da168dfa90/libpsl_src-populate-build.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/6ddfab09c0f64da1e369b9da168dfa90/libpsl_src-populate-configure.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/6ddfab09c0f64da1e369b9da168dfa90/libpsl_src-populate-download.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/6ddfab09c0f64da1e369b9da168dfa90/libpsl_src-populate-install.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/6ddfab09c0f64da1e369b9da168dfa90/libpsl_src-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/6ddfab09c0f64da1e369b9da168dfa90/libpsl_src-populate-patch.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/6ddfab09c0f64da1e369b9da168dfa90/libpsl_src-populate-test.rule"
+		},
+		{
+			"file" : "C:/Users/henry/OneDrive/Documents/PolymarketPlayerAnalysis/build/_deps/libpsl_src-subbuild/CMakeFiles/6ddfab09c0f64da1e369b9da168dfa90/libpsl_src-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"libpsl_src-populate"
+		],
+		"name" : "libpsl_src-populate"
+	}
+}

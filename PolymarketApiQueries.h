@@ -11,6 +11,11 @@
 #include <random>
 #include <mutex>
 
+class BotDetectedException : public std::runtime_error {
+public:
+    BotDetectedException(const std::string& msg) : std::runtime_error(msg) {}
+};
+
 class PolymarketApiQueries {
 public:
     PolymarketApiQueries(const std::string& config_file = "config.json");
@@ -19,6 +24,7 @@ public:
     std::unordered_map<std::string, GammaTokenData> getGammaTokenData(const std::vector<std::string>& token_ids) const;
     std::unordered_map<std::string, double> getTokenPrices(const std::vector<std::string>& token_ids) const;
     std::vector<tradeEvent> getMarketTradeHistory(const std::string& asset_id) const;
+    bool isBotAccount(const std::string& user_id) const;
 
 private:
     template <typename Func, typename RateLimitFunc>
