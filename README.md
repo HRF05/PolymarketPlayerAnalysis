@@ -1,13 +1,13 @@
-Prerequisites:
--To compile this C++17 compatible compiler is needed
--Cmake is needed
--To build run: cmake -S . -B build
--To compile run: cmake --build build --config Release
--The exe will be located in either the build directory or build\Release
+Prerequisites:\
+-To compile this C++17 compatible compiler is needed\
+-Cmake is needed\
+-To build run: cmake -S . -B build\
+-To compile run: cmake --build build --config Release\
+-The exe will be located in either the build directory or build\Release\
 
 
 
-Overview
+
 This project is a C++ pipeline designed to analyze decentralized prediction market data from Polymarket. It reconstructs market order books, evaluates the historical profitability of market participants, and generates an alternative probability model, using a simple demo strategy of creating some negative weight proportional to the difference in opinion of unprofitable market participants and market odds.
 
 Core Concepts:
