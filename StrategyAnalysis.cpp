@@ -1,10 +1,10 @@
 #include "StrategyAnalysis.h"
-#include <iomanip>
 
-std::vector<Prediction> StrategyAnalysis::init(const std::vector<tradeEvent>& historical_trades, const std::vector<double>& model_projections, double final_outcome) const {
+
+std::vector<Prediction> StrategyAnalysis::init(const std::vector<tradeEvent>& historical_trades, const std::vector<double>& model_predictions, double final_outcome) const {
     std::vector<Prediction> predictions;
-    if(historical_trades.size() != model_projections.size() || historical_trades.empty()){
-        std::cerr << "StrategyAnalysis\n";
+    if(historical_trades.size() != model_predictions.size() || historical_trades.empty()){
+        std::cerr << "StrategyAnalysis::init\n";
         return predictions;
     }
     if(historical_trades.size() < forward_lookahead_steps){
@@ -15,7 +15,7 @@ std::vector<Prediction> StrategyAnalysis::init(const std::vector<tradeEvent>& hi
         Prediction obs;
         obs.asset_id = historical_trades[i].asset_id;
         obs.market_price = historical_trades[i].price;
-        obs.model_price = model_projections[i];
+        obs.model_price = model_predictions[i];
         obs.final_outcome = final_outcome;
         obs.forward_price = historical_trades[i + forward_lookahead_steps].price;
         
@@ -30,7 +30,7 @@ double StrategyAnalysis::calculateCorrelation(const std::vector<double>& x, cons
     double sum_x = 0, sum_y = 0, sum_xy = 0, sum_sq_x = 0, sum_sq_y = 0;
     size_t n = x.size();
 
-    for(size_t i = 0; i < n; ++i){
+    for(size_t i = 0; i < n; i++){
         sum_x += x[i];
         sum_y += y[i];
         sum_xy += x[i] * y[i];
@@ -72,7 +72,7 @@ void StrategyAnalysis::evaluatePerformance(const std::vector<Prediction>& predic
         double market_error = obs.market_price - obs.final_outcome;
         brier_score_market_sum += (market_error * market_error);
 
-        // log-Loss component
+        // log-loss component
         double p = std::max(1e-15, std::min(1.0 - 1e-15, obs.model_price));
         log_loss_sum += -(obs.final_outcome * std::log(p) + (1.0 - obs.final_outcome) * std::log(1.0 - p));
 
@@ -83,9 +83,9 @@ void StrategyAnalysis::evaluatePerformance(const std::vector<Prediction>& predic
         forward_returns.push_back(fwd_return);
 
         // directional hit rate
-        if (std::abs(edge) > 0.01) {
+        if(std::abs(edge) > 0.01){
             correct_direction_calls++;
-            if ((edge > 0 && fwd_return > 0) || (edge < 0 && fwd_return < 0)) {
+            if((edge > 0 && fwd_return > 0) || (edge < 0 && fwd_return < 0)){
                 hits++;
             }
         }
@@ -104,7 +104,7 @@ void StrategyAnalysis::evaluatePerformance(const std::vector<Prediction>& predic
     
 
     double bss = 0.0;
-    if (bs_market != 0.0) {
+    if(bs_market != 0.0){
         bss = 1.0 - (bs_model / bs_market);
     }
 
@@ -114,28 +114,33 @@ void StrategyAnalysis::evaluatePerformance(const std::vector<Prediction>& predic
 
 
 
-    std::cout << "Total Trades:    " << n << "\n";
-    std::cout << "Model Brier Score:    " << std::fixed << std::setprecision(4) << bs_model << "\n";
-    std::cout << "Market Brier Score:   " << std::fixed << std::setprecision(4) << bs_market << "\n";
-    std::cout << "Brier Skill Score:    " << std::fixed << std::setprecision(4) << bss << " (>0 means you have an edge)\n";
-    std::cout << "Global Log-Loss:      " << log_loss << "\n";
-    std::cout << "Edge/Return Pearsonr: " << edge_return_correlation << "\n";
-    std::cout << "Directional Hit Rate: " << std::setprecision(2) << hit_rate << "%\n";
+   std::ofstream file("data/strategy_performance.txt");
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file to write performance report.\n";
+        return;
+    }
 
+    file << "Total Trades: " << n << "\n";
+    file << "Model Brier Score: " << bs_model << "\n";
+    file << "Market Brier Score: " << bs_market << "\n";
+    file << "Brier Skill Score: " << bss << "\n";
+    file << "Global Log-Loss: " << log_loss << "\n";
+    file << "Edge/Return Pearsonr: " << edge_return_correlation << "\n";
+    file << "Directional Hit Rate: " << hit_rate << "%\n";
 
-
-    std::cout << "\n=== PROBABILITY CALIBRATION ===\n";
-    std::cout << "Bucket      | N trades | Avg Model Prob | Actual Resolution Rate\n";
-    std::cout << "--------------------------------------------------------------\n";
+    file << "\nPROBABILITY CALIBRATION\n";
+    file << "Bucket, N trades, Avg Model Prob, Actual Resolution Rate\n";
+    
     for (int i = 0; i < 10; ++i) {
         if (calibration_buckets[i].count > 0) {
             double avg_model = calibration_buckets[i].sum_model / calibration_buckets[i].count;
-            double actual_rate = calibration_buckets[i].sum_actual / calibration_buckets[i].count;
-            std::cout<< std::fixed<<std::setprecision(1)
-                    << (i * 10.0) << "%-" << ((i + 1) * 10.0) << "% | "
-                    << std::setw(8) << calibration_buckets[i].count << " | "
-                    << std::setw(13) << std::setprecision(3) << avg_model << " | "
-                    << std::setw(21) << std::setprecision(3) << actual_rate << "\n";
+            double actual_rate = calibration_buckets[i].sum_actual / calibration_buckets[i].count;     
+            file << (i * 10) << "-" << ((i + 1) * 10) << "%, "
+                 << calibration_buckets[i].count << ", "
+                 << avg_model << ", "
+                 << actual_rate << "\n";
         }
     }
+    
+    file.close();
 }

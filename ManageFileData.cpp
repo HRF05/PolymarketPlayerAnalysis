@@ -1,11 +1,4 @@
 #include "ManageFileData.h"
-#include <fstream>
-#include <iostream>
-#include <filesystem>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <thread>
 
 void ManageFileData::usersFileAdd(const std::unordered_map<std::string, UserAnalysisResult> &user_result, const std::string &user_filename){
     std::string filename = "./data/users_temp_" + std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())) + ".csv";

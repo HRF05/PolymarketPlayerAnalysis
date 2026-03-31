@@ -10,6 +10,9 @@
 #include <chrono>
 #include <random>
 #include <mutex>
+#include <algorithm>
+#include <fstream>
+#include <nlohmann/json.hpp>
 
 class BotDetectedException : public std::runtime_error {
 public:
@@ -79,5 +82,5 @@ private:
     mutable std::mutex goldsky_rate_mtx;
     mutable std::chrono::steady_clock::time_point last_goldsky_call = std::chrono::steady_clock::now();
 
-    const double TOKEN_CONVERSION__DIVIDE = 1e6;
+    
 };

@@ -34,15 +34,15 @@ int main() {
         std::cout<<"startWorkers\n";
         pipeline.startWorkers();
         std::vector<std::string> test_users;
-        std::unordered_map<std::string, bool> seen;
+        std::unordered_set<std::string> seen;
         for(const auto &trade : trades){
-            if(!seen[trade.maker_id]){
+            if(!seen.count(trade.maker_id)){
                 test_users.push_back(trade.maker_id);
-                seen[trade.maker_id] = true;
+                seen.insert(trade.maker_id);
             }
-            if(!seen[trade.taker_id]){
+            if(!seen.count(trade.taker_id)){
                 test_users.push_back(trade.taker_id);
-                seen[trade.taker_id] = true;
+                seen.insert(trade.taker_id);
             }
         }
         {

@@ -1,4 +1,6 @@
 #pragma once
+#include "PredictionModel.h"
+#include <fstream>
 #include "Models.h"
 #include <vector>
 #include <iostream>

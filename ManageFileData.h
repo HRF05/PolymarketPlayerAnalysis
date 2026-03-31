@@ -2,6 +2,13 @@
 #include "Models.h"
 #include <unordered_map>
 #include <string>
+#include <fstream>
+#include <iostream>
+#include <filesystem>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <thread>
 #include <vector>
 
 namespace ManageFileData{

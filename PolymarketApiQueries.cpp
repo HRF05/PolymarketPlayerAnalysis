@@ -1,6 +1,4 @@
 #include "PolymarketApiQueries.h"
-#include <algorithm>
-#include <nlohmann/json.hpp>
 
 PolymarketApiQueries::PolymarketApiQueries(const std::string& config_file){
     std::ifstream file(config_file);
@@ -147,6 +145,7 @@ std::vector<UserPosition> PolymarketApiQueries::getUserPositions(const std::stri
     std::vector<UserPosition> ret;
     std::string last_id = "";
     int positions_size = 1000;
+    const double USD_CONVERSION = 1e6;
 
 
     thread_local cpr::Session session;
@@ -186,9 +185,9 @@ std::vector<UserPosition> PolymarketApiQueries::getUserPositions(const std::stri
         for(const auto& pos : positions){
             UserPosition ps;
             ps.token_id = pos.value("tokenId", "");
-            ps.amount = std::stod(pos.value("amount", "0")) / TOKEN_CONVERSION__DIVIDE; 
-            ps.avg_price = std::stod(pos.value("avgPrice", "0")) / TOKEN_CONVERSION__DIVIDE;
-            ps.realized_pnl = std::stod(pos.value("realizedPnl", "0")) / TOKEN_CONVERSION__DIVIDE;
+            ps.amount = std::stod(pos.value("amount", "0")) / USD_CONVERSION; 
+            ps.avg_price = std::stod(pos.value("avgPrice", "0")) / USD_CONVERSION;
+            ps.realized_pnl = std::stod(pos.value("realizedPnl", "0")) / USD_CONVERSION;
             ret.push_back(ps);
         }
         if(positions.size() < positions_size) break;
@@ -257,7 +256,7 @@ bool PolymarketApiQueries::isBotAccount(const std::string& user_id) const {
 std::vector<tradeEvent> PolymarketApiQueries::getMarketTradeHistory(const std::string& asset_id) const{
     std::vector<tradeEvent> trades;
     trades.reserve(50000);
-
+    const double USD_CONVERSION = 1e6;
     cpr::Session session;
     session.SetUrl(cpr::Url{orderbook_subgraph_url});
     session.SetHeader(cpr::Header{{"Content-Type", "application/json"}});
@@ -316,7 +315,7 @@ std::vector<tradeEvent> PolymarketApiQueries::getMarketTradeHistory(const std::s
                 }
                 if(token_amount > 0) event.price = usdc_amount / token_amount;
                 else std::cerr<<"token_amount is 0 in get_trade_history"<<"\n";
-                event.size = token_amount / TOKEN_CONVERSION__DIVIDE; 
+                event.size = token_amount / USD_CONVERSION; 
                 trades.push_back(event);
             }
             
