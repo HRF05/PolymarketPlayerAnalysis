@@ -55,7 +55,7 @@ void UserStatsPipeline::startWorkers() {
                     double resolved_unrealized = 0.0;
                     std::vector<UserPosition> unresolved_positions;
 
-                    for(const auto& pos : task.positions){
+                    for(auto& pos : task.positions){
                         if(gamma_data.count(pos.token_id) && gamma_data[pos.token_id].is_resolved){
                             // market is finished.. final worth immediately
                             double token_val = gamma_data[pos.token_id].is_winner ? 1.0 : 0.0;
@@ -63,6 +63,9 @@ void UserStatsPipeline::startWorkers() {
                         }
                         else{
                             // market is still active
+                            if(gamma_data.count(pos.token_id)){
+                                pos.gamma_price = gamma_data[pos.token_id].price;
+                            }
                             unresolved_positions.push_back(pos);
                         }
                     }
@@ -96,9 +99,11 @@ void UserStatsPipeline::startWorkers() {
                     
                     double active_unrealized = 0.0;
                     for(const auto& pos : task.unresolved_positions){
+                        double current_price = pos.gamma_price; // if market is dead it will use last trades price, if there is no last traded price then 0
                         if (prices.count(pos.token_id)) {
-                            active_unrealized += (prices[pos.token_id] - pos.avg_price) * pos.amount;
+                            current_price = prices[pos.token_id];
                         }
+                        active_unrealized += (current_price - pos.avg_price) * pos.amount;
                     }
                     
                     double final_unrealized_pnl = task.unrealized_pnl + active_unrealized;

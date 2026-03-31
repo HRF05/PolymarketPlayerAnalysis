@@ -98,7 +98,7 @@ std::unordered_map<std::string, double> PolymarketApiQueries::getTokenPrices(con
     std::unordered_map<std::string, double> prices;
     if(token_ids.empty()) return prices;
 
-    const size_t BATCH_SIZE = 25;
+    const size_t BATCH_SIZE = 15;
 
     thread_local cpr::Session session;
     session.SetUrl(cpr::Url{clob_base_url + "/prices"});
@@ -134,9 +134,6 @@ std::unordered_map<std::string, double> PolymarketApiQueries::getTokenPrices(con
                 auto val = response[id]["BUY"];
                 prices[id] = val.is_string() ? std::stod(val.get<std::string>()) : val.get<double>();
             }
-            else{
-                std::cerr<<"clob price missing from tokens "<<id<<"\n";
-            }
         }
     }
     return prices;
@@ -144,7 +141,7 @@ std::unordered_map<std::string, double> PolymarketApiQueries::getTokenPrices(con
 std::vector<UserPosition> PolymarketApiQueries::getUserPositions(const std::string& user_id) const{
     std::vector<UserPosition> ret;
     std::string last_id = "";
-    int positions_size = 1000;
+    int positions_size = 200;
     const double USD_CONVERSION = 1e6;
 
 
@@ -154,8 +151,7 @@ std::vector<UserPosition> PolymarketApiQueries::getUserPositions(const std::stri
 
     while(true){
         std::string id_filter = last_id.empty() ? "" : "id_gt: \"" + last_id + "\", ";
-        std::string graphql_query = R"(query getPL($user: String!){
-            userPositions(first: )" + std::to_string(positions_size) + R"(,orderBy: id, orderDirection: asc, where: { )" + id_filter + R"(user: $user }){id realizedPnl tokenId amount avgPrice}})";
+        std::string graphql_query = R"(query getPL($user: String!){ userPositions(first: )" + std::to_string(positions_size) + R"(,orderBy: id, orderDirection: asc, where: { )" + id_filter + R"(user: $user }){id realizedPnl tokenId amount avgPrice}})";
         nlohmann::json request_body = {
             {"query", graphql_query},
             {"variables", {{"user", user_id}}}

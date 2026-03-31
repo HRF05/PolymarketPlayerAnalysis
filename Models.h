@@ -9,6 +9,7 @@ struct UserPosition {
     double amount = 0.0;
     double avg_price = 0.0;
     double realized_pnl = 0.0;
+    double gamma_price = 0.0;
 };
 struct GammaTokenData {
     bool is_resolved = false;
