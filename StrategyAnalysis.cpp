@@ -1,7 +1,7 @@
 #include "StrategyAnalysis.h"
 
 
-std::vector<Prediction> StrategyAnalysis::init(const std::vector<tradeEvent>& historical_trades, const std::vector<double>& model_predictions, double final_outcome) const {
+std::vector<Prediction> StrategyAnalysis::init(const std::vector<TradeEvent>& historical_trades, const std::vector<double>& model_predictions, double final_outcome) const {
     std::vector<Prediction> predictions;
     if(historical_trades.size() != model_predictions.size() || historical_trades.empty()){
         std::cerr << "StrategyAnalysis::init\n";

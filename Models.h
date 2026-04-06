@@ -22,7 +22,7 @@ struct PnlResult {
     
     double total() const { return realized + unrealized; }
 };
-struct tradeEvent {
+struct TradeEvent {
     uint64_t timestamp = 0;
     double price = 0.0;
     double size = 0;

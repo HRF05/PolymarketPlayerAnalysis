@@ -1,0 +1,1431 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+CMakeLists.txt
+config.json
+main.cpp
+ManageFileData.cpp
+ManageFileData.h
+Models.h
+PolymarketApiQueries.cpp
+PolymarketApiQueries.h
+PredictionModel.cpp
+PredictionModel.h
+README.md
+StrategyAnalysis.cpp
+StrategyAnalysis.h
+ThreadSafeQueue.h
+UserStatsPipeline.cpp
+UserStatsPipeline.h
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="PredictionModel.cpp">
+#include "PredictionModel.h"
+
+bool PredictionModel::isCredible(UserAnalysisResult pnl){
+    if(pnl.realized + pnl.unrealized > 1000) return true;
+    if(pnl.is_bot == true) return true;
+    if(pnl.num_pos == 1) return true; // if this is their only position not enough data.. Maybe could remove this
+    return false;
+}
+
+std::vector<double> PredictionModel::impliedOddsFromNonCredibleUsers(const std::vector<TradeEvent>& market_history, const std::unordered_map<std::string, UserAnalysisResult>& user_stats){
+    std::vector<double> res;
+    res.reserve(market_history.size());
+    double yes_weighted_volume = 0.0;
+    double no_weighted_volume = 0.0;
+    for(auto& trade : market_history){
+        UserAnalysisResult maker_res = user_stats.at(trade.maker_id), taker_res = user_stats.at(trade.taker_id);
+
+        bool cmaker = isCredible(maker_res);
+        bool ctaker = isCredible(taker_res);
+
+        double yes_cost = trade.size * trade.price;
+        double no_cost = trade.size * (1.0 - trade.price);
+
+        if(!cmaker){
+            if(trade.is_buyer_maker){
+                yes_weighted_volume += yes_cost;
+            }
+            else{
+                no_weighted_volume += no_cost;
+            }
+        }
+
+        if(!ctaker){
+            if(!trade.is_buyer_maker){
+                yes_weighted_volume += yes_cost;
+            }
+            else{
+                no_weighted_volume += no_cost;
+            }
+        }
+        if(yes_weighted_volume + no_weighted_volume == 0.0){
+            res.push_back(0);
+        }
+        else{
+            res.push_back(yes_weighted_volume / (yes_weighted_volume + no_weighted_volume));
+        }
+    }
+    
+    return res;
+}
+
+std::vector<double> PredictionModel::generatePredictedOdds(const std::vector<TradeEvent>& market_history, const std::unordered_map<std::string, UserAnalysisResult>& user_stats, double WEIGHT){
+
+    std::vector<double> impliedOddsNC = impliedOddsFromNonCredibleUsers(market_history, user_stats);
+    std::vector<double> res;
+    res.reserve(market_history.size());
+    for(int i = 0; i < market_history.size(); i++){ // using last sale as market price may be suboptimal
+        double market_price = market_history.at(i).price;
+
+        if(impliedOddsNC[i] == 0){
+            res.push_back(market_price);
+            continue;
+        }
+
+        double predicted_odds = market_price + (WEIGHT * (market_price - impliedOddsNC[i]));
+        
+        res.push_back(predicted_odds);
+    }
+    return res;
+}
+</file>
+
+<file path="PredictionModel.h">
+#include <vector>
+#include "Models.h"
+#include <string>
+#include <unordered_map>
+
+namespace PredictionModel{
+    bool isCredible(UserAnalysisResult pnl);
+    std::vector<double> impliedOddsFromNonCredibleUsers(const std::vector<TradeEvent>& market_history, const std::unordered_map<std::string, UserAnalysisResult>& user_stats); 
+    std::vector<double> generatePredictedOdds(const std::vector<TradeEvent>& market_history, const std::unordered_map<std::string, UserAnalysisResult>& user_stats, double WEIGHT = 0.05);// both return odds of "yes" outcome
+}
+</file>
+
+<file path=".gitignore">
+build/
+data/
+
+
+.vscode/
+</file>
+
+<file path="CMakeLists.txt">
+cmake_minimum_required(VERSION 3.14)
+project(PolymarketAnalyzer CXX)
+
+cmake_policy(SET CMP0135 NEW)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+include(FetchContent)
+FetchContent_Declare(json
+  URL https://github.com/nlohmann/json/releases/download/v3.11.2/json.tar.xz
+)
+FetchContent_MakeAvailable(json)
+
+
+FetchContent_Declare(cpr
+  GIT_REPOSITORY https://github.com/libcpr/cpr.git
+  GIT_TAG        master 
+)
+FetchContent_MakeAvailable(cpr)
+
+find_package(Threads REQUIRED)
+
+add_executable(${PROJECT_NAME}
+    main.cpp
+    PolymarketApiQueries.cpp
+    StrategyAnalysis.cpp
+    UserStatsPipeline.cpp
+    ManageFileData.cpp 
+)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+    cpr::cpr
+    nlohmann_json::nlohmann_json
+    Threads::Threads
+)
+</file>
+
+<file path="config.json">
+{
+    "goldsky":{
+        "pnl_subgraph": "https://api.goldsky.com/api/public/project_cl6mb8i9h0003e201j6li0diw/subgraphs/pnl-subgraph/0.0.14/gn",
+        "orderbook_subgraph": "https://api.goldsky.com/api/public/project_cl6mb8i9h0003e201j6li0diw/subgraphs/orderbook-subgraph/0.0.1/gn"
+    },
+    "api":{
+        "gamma": "https://gamma-api.polymarket.com/markets",
+        "clob": "https://clob.polymarket.com"
+    }
+}
+</file>
+
+<file path="README.md">
+Prerequisites:\
+-To compile this C++17 compatible compiler is needed\
+-Cmake is needed\
+-To build run: cmake -S . -B build\
+-To compile run: cmake --build build --config Release\
+-The exe will be located in either the build directory or build\Release\
+
+
+
+
+This project is a C++ pipeline designed to analyze decentralized prediction market data from Polymarket. It reconstructs market order books, evaluates the historical profitability of market participants, and generates an alternative probability model, using a simple demo strategy of creating some negative weight proportional to the difference in opinion of unprofitable market participants and market odds.
+
+Core Concepts:
+- System Architecture & Concurrency Multi-threaded Data Ingestion: Uses a ThreadSafeQueue to manage a thread pool across three data fetching pipelines (Goldsky subgraphs, Gamma API, and CLOB API). Asynchronous Processing: The UserStatsPipeline handles concurrent task processing, ensuring thread safety with mutexes and condition variables while gathering various data needed to accurately calculate user positions.
+
+- Efficient and Safe API Queries: Implements exponential backoff algorithms with randomized jitter to handle API rate limits. The system manages thread-safe request  across multiple concurrent API endpoints to ensure reliable, data ingestion without triggering server-side blocks.
+
+- Probability Modeling: PredictionModel isolates trades from "non-credible" actors (users who do not meet specific profitability or volume thresholds). It calculates implied odds by weighting the volume of these actors, creating a contrarion indicator based on the probability that is logically implied by their actions.
+
+- Algorithmic Bot Detection: The system employs a heuristic analysis to identify bots, analyzing trade density for bursts and macro time horizons.
+
+- Predictive Evaluation Metrics: StrategyAnalysis module evaluates the generated probability models against actual market resolutions using standard scoring rules: Brier Score & Brier Skill Score (BSS): Measures the mean squared difference between predicted probabilities and actual outcomes. Logarithmic Loss: Punishes extreme confidence in incorrect predictions. Pearson Correlation: Calculates the correlation between the model's perceived edge and forward market returns. Probability Calibration: Segments predictions into decile buckets to measure how well the model's confidence aligns with empirical resolution rates.
+</file>
+
+<file path="ThreadSafeQueue.h">
+#pragma once
+#include <queue>
+#include <mutex>
+#include <condition_variable>
+
+//  http://mezhenskyi.dev/posts/task-queue/
+template <typename T>
+class ThreadSafeQueue {
+private:
+    std::queue<T> queue;
+    std::mutex mtx;
+    std::condition_variable cv;
+    bool is_done = false;
+
+public:
+    void push(T value) {
+        std::lock_guard<std::mutex> lock(mtx);
+        queue.push(std::move(value));
+        cv.notify_one(); 
+    }
+    bool wait_and_pop(T& value) {
+        std::unique_lock<std::mutex> lock(mtx);
+        
+        cv.wait(lock, [this] { return !queue.empty() || is_done; });
+        
+        if (queue.empty() && is_done) {
+            return false;
+        }
+        
+        value = std::move(queue.front());
+        queue.pop();
+        return true;
+    }
+
+    void set_done() {
+        std::lock_guard<std::mutex> lock(mtx);
+        is_done = true;
+        cv.notify_all();
+    }
+};
+</file>
+
+<file path="StrategyAnalysis.cpp">
+#include "StrategyAnalysis.h"
+
+
+std::vector<Prediction> StrategyAnalysis::init(const std::vector<TradeEvent>& historical_trades, const std::vector<double>& model_predictions, double final_outcome) const {
+    std::vector<Prediction> predictions;
+    if(historical_trades.size() != model_predictions.size() || historical_trades.empty()){
+        std::cerr << "StrategyAnalysis::init\n";
+        return predictions;
+    }
+    if(historical_trades.size() < forward_lookahead_steps){
+        std::cerr<<"historical_trades < forward_lookahead_steps in StrategyAnalysis::init\n";
+        return predictions;
+    }
+    for(size_t i = 0; i < historical_trades.size() - forward_lookahead_steps; i++){
+        Prediction obs;
+        obs.asset_id = historical_trades[i].asset_id;
+        obs.market_price = historical_trades[i].price;
+        obs.model_price = model_predictions[i];
+        obs.final_outcome = final_outcome;
+        obs.forward_price = historical_trades[i + forward_lookahead_steps].price;
+        
+        predictions.push_back(obs);
+    }
+    return predictions;
+}
+
+double StrategyAnalysis::calculateCorrelation(const std::vector<double>& x, const std::vector<double>& y) const{
+    if(x.empty() || x.size() != y.size()) return 0.0;
+
+    double sum_x = 0, sum_y = 0, sum_xy = 0, sum_sq_x = 0, sum_sq_y = 0;
+    size_t n = x.size();
+
+    for(size_t i = 0; i < n; i++){
+        sum_x += x[i];
+        sum_y += y[i];
+        sum_xy += x[i] * y[i];
+        sum_sq_x += x[i] * x[i];
+        sum_sq_y += y[i] * y[i];
+    }
+
+    double numerator = (n * sum_xy) - (sum_x * sum_y);
+    double denominator = std::sqrt(std::max((n * sum_sq_x) - (sum_x * sum_x), 0.0) * std::max((n * sum_sq_y) - (sum_y * sum_y), 0.0));
+
+    if(denominator == 0) return 0.0;
+    return numerator / denominator;
+}
+
+void StrategyAnalysis::evaluatePerformance(const std::vector<Prediction>& predictions) const{
+    if(predictions.empty()){
+        std::cerr << "No predictions to evaluate.\n";
+        return;
+    }
+
+    double brier_score_model_sum = 0.0;
+    double brier_score_market_sum = 0.0;
+    double log_loss_sum = 0.0;
+    std::vector<double> edges;
+    std::vector<double> forward_returns;
+
+    struct Bucket{int count = 0; double sum_model = 0.0; double sum_actual = 0.0; };
+    std::vector<Bucket> calibration_buckets(10);
+
+    int hits = 0;
+    int correct_direction_calls = 0;
+
+    for(const auto& obs : predictions){
+        // model brier score
+        double model_error = obs.model_price - obs.final_outcome;
+        brier_score_model_sum += (model_error * model_error);
+
+        // market brier score
+        double market_error = obs.market_price - obs.final_outcome;
+        brier_score_market_sum += (market_error * market_error);
+
+        // log-loss component
+        double p = std::max(1e-15, std::min(1.0 - 1e-15, obs.model_price));
+        log_loss_sum += -(obs.final_outcome * std::log(p) + (1.0 - obs.final_outcome) * std::log(1.0 - p));
+
+        // edge and return tracking for correlation
+        double edge = obs.model_price - obs.market_price;
+        double fwd_return = obs.forward_price - obs.market_price;
+        edges.push_back(edge);
+        forward_returns.push_back(fwd_return);
+
+        // directional hit rate
+        if(std::abs(edge) > 0.01){
+            correct_direction_calls++;
+            if((edge > 0 && fwd_return > 0) || (edge < 0 && fwd_return < 0)){
+                hits++;
+            }
+        }
+
+        // calibration mapping
+        int bin = std::max(0, std::min(9, static_cast<int>(obs.model_price * 10)));
+        calibration_buckets[bin].count++;
+        calibration_buckets[bin].sum_model += obs.model_price;
+        calibration_buckets[bin].sum_actual += obs.final_outcome;
+    }
+
+    size_t n = predictions.size();
+    
+    double bs_model = brier_score_model_sum / n;
+    double bs_market = brier_score_market_sum / n;
+    
+
+    double bss = 0.0;
+    if(bs_market != 0.0){
+        bss = 1.0 - (bs_model / bs_market);
+    }
+
+    double log_loss = log_loss_sum / n;
+    double edge_return_correlation = calculateCorrelation(edges, forward_returns);
+    double hit_rate = correct_direction_calls > 0 ? (static_cast<double>(hits) / correct_direction_calls) * 100.0 : 0.0;
+
+
+
+   std::ofstream file("data/strategy_performance.txt");
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open file to write performance report.\n";
+        return;
+    }
+
+    file << "Total Trades: " << n << "\n";
+    file << "Model Brier Score: " << bs_model << "\n";
+    file << "Market Brier Score: " << bs_market << "\n";
+    file << "Brier Skill Score: " << bss << "\n";
+    file << "Global Log-Loss: " << log_loss << "\n";
+    file << "Edge/Return Pearsonr: " << edge_return_correlation << "\n";
+    file << "Directional Hit Rate: " << hit_rate << "%\n";
+
+    file << "\nPROBABILITY CALIBRATION\n";
+    file << "Bucket, N trades, Avg Model Prob, Actual Resolution Rate\n";
+    
+    for (int i = 0; i < 10; ++i) {
+        if (calibration_buckets[i].count > 0) {
+            double avg_model = calibration_buckets[i].sum_model / calibration_buckets[i].count;
+            double actual_rate = calibration_buckets[i].sum_actual / calibration_buckets[i].count;     
+            file << (i * 10) << "-" << ((i + 1) * 10) << "%, "
+                 << calibration_buckets[i].count << ", "
+                 << avg_model << ", "
+                 << actual_rate << "\n";
+        }
+    }
+    
+    file.close();
+}
+</file>
+
+<file path="StrategyAnalysis.h">
+#pragma once
+#include "PredictionModel.h"
+#include <fstream>
+#include "Models.h"
+#include <vector>
+#include <iostream>
+#include <cmath>
+#include <numeric>
+
+struct Prediction{
+    std::string asset_id;
+    double market_price;
+    double model_price;
+    double forward_price;
+    double final_outcome;
+};
+
+class StrategyAnalysis{
+private:
+    int forward_lookahead_steps;
+
+public:
+    StrategyAnalysis(int lookahead_steps = 100) : forward_lookahead_steps(lookahead_steps) {}
+
+    std::vector<Prediction> init(const std::vector<TradeEvent>& historical_trades, const std::vector<double>& model_projections, double final_outcome) const;
+    
+    void evaluatePerformance(const std::vector<Prediction>& predictions) const;
+
+private:
+    double calculateCorrelation(const std::vector<double>& x, const std::vector<double>& y) const;
+};
+</file>
+
+<file path="UserStatsPipeline.h">
+#pragma once
+#include "ThreadSafeQueue.h"
+#include "PolymarketApiQueries.h"
+#include <thread>
+#include <vector>
+#include <unordered_map>
+#include <iostream>
+#include <atomic>
+#include <condition_variable>
+
+class UserStatsPipeline {
+private:
+    PolymarketApiQueries& api;
+    ThreadSafeQueue<UserQueryTask> goldsky_queue;
+    ThreadSafeQueue<GammaTask> gamma_queue;
+    ThreadSafeQueue<ClobTask> clob_queue;
+    
+    
+    std::vector<std::thread> goldsky_workers;
+    std::vector<std::thread> gamma_workers;
+    std::vector<std::thread> clob_workers;
+
+    std::mutex results_mtx;
+    std::unordered_map<std::string, UserAnalysisResult> final_results;
+
+
+    std::atomic<int> active_tasks{0};
+    std::mutex completion_mtx;
+    std::condition_variable completion_cv;
+
+
+    int num_goldsky, num_clob, num_gamma;
+
+public:
+    UserStatsPipeline(PolymarketApiQueries& api_ref, int goldsky_threads = 5, int clob_threads = 20, int gamma_threads = 20);
+    ~UserStatsPipeline();
+
+    void startWorkers();
+
+    void processUsers(const std::vector<std::string>& users);
+    void finalizeUser(const std::string& user_id, double realized, double unrealized, size_t total_positions, bool is_error = false, bool is_bot = false);
+    std::unordered_map<std::string, UserAnalysisResult> getPnlData() { std::lock_guard<std::mutex> lock(results_mtx); return final_results;}
+    void clearResults() { std::lock_guard<std::mutex> lock(results_mtx); final_results.clear(); }
+};
+</file>
+
+<file path="main.cpp">
+#include "PolymarketApiQueries.h"
+#include "UserStatsPipeline.h"
+#include "ManageFileData.h"
+#include <unordered_map>
+#include <iostream>
+
+/*
+
+for testing:
+clob token id s are asset ids
+
+mike tyson: https://gamma-api.polymarket.com/markets?condition_ids=0xb4961db4b70b4ebeebce6dee9816eda7a18443ae2d25240a70a0614a01f44ed2/
+"105698626207188362137224559516875335051389535882173153619615964622033134253951"
+jake paul:
+draw:
+
+trump # of tweets is between 0-19 from feb 27 to march 6: https://gamma-api.polymarket.com/markets?condition_ids=0x7b93af81c68efe4892bcfbc4bac8091dc2ffe0c85b63e2e955277778f6d813ac
+"99186634638554651998743980431533134312247631653178164081175829567227353524421"
+"89308404461300170915063446315611587250054643852836517235026678818761584555534"
+*/
+int main() {
+    try{
+        std::string asset_id = "99186634638554651998743980431533134312247631653178164081175829567227353524421";
+
+        std::string user_filename = "data/users-cache.csv";
+
+        PolymarketApiQueries api("config.json");
+
+        ManageFileData::marketFileAdd(api.getMarketTradeHistory(asset_id), asset_id);
+        std::vector<TradeEvent> trades = ManageFileData::marketFileGet(asset_id);
+
+        UserStatsPipeline pipeline(api);
+        
+        std::cout<<"startWorkers\n";
+        pipeline.startWorkers();
+        std::vector<std::string> test_users;
+        std::unordered_set<std::string> seen;
+        for(const auto &trade : trades){
+            if(!seen.count(trade.maker_id)){
+                test_users.push_back(trade.maker_id);
+                seen.insert(trade.maker_id);
+            }
+            if(!seen.count(trade.taker_id)){
+                test_users.push_back(trade.taker_id);
+                seen.insert(trade.taker_id);
+            }
+        }
+        {
+            pipeline.processUsers(test_users);
+        }
+        
+        
+
+        std::unordered_map<std::string, UserAnalysisResult> final_results = pipeline.getPnlData();
+
+        ManageFileData::usersFileAdd(final_results, user_filename);
+
+    }
+    catch(const std::exception& e){
+        std::cerr << "Fatal error: " << e.what() << "\n";
+    }
+    return 0;
+}
+</file>
+
+<file path="ManageFileData.cpp">
+#include "ManageFileData.h"
+
+void ManageFileData::usersFileAdd(const std::unordered_map<std::string, UserAnalysisResult> &user_result, const std::string &user_filename){
+    std::string filename = "./data/users_temp_" + std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())) + ".csv";
+    {
+        std::ofstream file(filename);
+        if (!file.is_open()) return; 
+        
+        file << "user_id,num_pos,realzied,unrealized\n";
+        for(const auto& user : user_result){
+            file << user.first << "," << user.second.num_pos << "," << user.second.realized << "," << user.second.unrealized << "\n";
+        }
+    }
+    std::error_code ec;
+    std::filesystem::rename(filename, user_filename, ec); // atomic
+    if(ec){
+        std::cerr << "error renaming file: " << ec.message() << "\n";
+        std::filesystem::remove(filename); 
+    }
+    return;
+}
+
+std::unordered_map<std::string, UserAnalysisResult> ManageFileData::usersFileGet(const std::string &user_filename){
+    std::ifstream file(user_filename);
+    std::string line;
+    std::getline(file, line);
+    std::unordered_map<std::string, UserAnalysisResult> ret;
+    while(std::getline(file, line)){
+        if (line.empty()) continue;
+        size_t start = 0;
+        size_t end = 0;
+
+        auto next_token = [&](){
+            end = line.find(',', start);
+            std::string token = line.substr(start, end - start);
+            start = end + 1;
+            return token;
+        };
+        std::string user_id = next_token();
+        size_t num_pos = static_cast<size_t>(std::stoull(next_token()));
+        double realized = std::stod(next_token());
+        double unrealized = std::stod(line.substr(start)); 
+        ret[user_id] = {realized, unrealized, num_pos};
+    }
+    return ret;
+}
+
+void ManageFileData::marketFileAdd(const std::vector<TradeEvent>& trades, const std::string& asset_id){
+    std::filesystem::create_directories("./data");
+    std::string filename = "./data/market-" + asset_id + ".csv";
+    std::ofstream outFile(filename);
+    if (!outFile.is_open()) {
+        std::cerr << "\ncould not create file at " << filename << "\n";
+        return; 
+    }
+    outFile << "timestamp,price,size,is_buyer_maker,asset_id,maker_id,taker_id\n";
+    for(const auto& t : trades){
+        outFile << t.timestamp << "," 
+                << t.price << "," 
+                << t.size << "," 
+                << t.is_buyer_maker << ","
+                << t.asset_id << ","
+                << t.maker_id << ","
+                << t.taker_id << "\n";
+    }
+}
+
+std::vector<TradeEvent> ManageFileData::marketFileGet(const std::string& asset_id){
+    std::vector<TradeEvent> trades;
+    std::string filename = "./data/market-" + asset_id + ".csv";
+    
+    if(!std::filesystem::exists(filename)){
+        return trades;
+    }
+    
+    std::ifstream file(filename);
+    if(!file.is_open()){
+        std::cerr << "error: could not open file  ... ManageFileData::marketFileGet" << filename << "\n";
+        return trades;
+    }
+
+    trades.reserve(50000);
+    std::string line;
+    std::getline(file, line);
+
+    while(std::getline(file, line)){
+        if(line.empty()) continue;
+
+        TradeEvent row;
+        size_t start = 0;
+        size_t end = 0;
+
+        auto next_token = [&](){
+            end = line.find(',', start);
+            std::string token = line.substr(start, end - start);
+            start = end + 1;
+            return token;
+        };
+
+        row.timestamp = std::stoull(next_token());
+        row.price = std::stod(next_token());
+        row.size = std::stod(next_token());
+        row.is_buyer_maker = (next_token() == "1");
+        row.asset_id = next_token();
+        row.maker_id = next_token();
+        row.taker_id = line.substr(start); 
+        trades.push_back(std::move(row));
+    }
+    return trades;
+}
+</file>
+
+<file path="ManageFileData.h">
+#pragma once
+#include "Models.h"
+#include <unordered_map>
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <filesystem>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <thread>
+#include <vector>
+
+namespace ManageFileData{
+    void usersFileAdd(const std::unordered_map<std::string, UserAnalysisResult> &user_credible, const std::string &user_filename);
+    std::unordered_map<std::string, UserAnalysisResult> usersFileGet(const std::string &user_filename);
+    std::vector<TradeEvent> marketFileGet(const std::string& asset_id);
+    void marketFileAdd(const std::vector<TradeEvent>& trades, const std::string& filename);
+};
+</file>
+
+<file path="Models.h">
+#pragma once
+#include <string>
+#include <cstdint>
+#include <vector>
+
+struct UserPosition {
+    std::string id;
+    std::string token_id;
+    double amount = 0.0;
+    double avg_price = 0.0;
+    double realized_pnl = 0.0;
+    double gamma_price = 0.0;
+};
+struct GammaTokenData {
+    bool is_resolved = false;
+    bool is_winner = false;
+    double price = 0.0;
+};
+struct PnlResult {
+    double realized = 0.0;
+    double unrealized = 0.0;
+    
+    double total() const { return realized + unrealized; }
+};
+struct TradeEvent {
+    uint64_t timestamp = 0;
+    double price = 0.0;
+    double size = 0;
+    std::string maker_id, taker_id, asset_id;
+    bool is_buyer_maker = false;
+};
+
+struct UserQueryTask {
+    std::string user_id;
+};
+struct GammaTask {
+    std::string user_id;
+    double realized_pnl;
+    size_t total_positions;
+    std::vector<UserPosition> positions;
+};
+struct ClobTask {
+    std::string user_id;
+    double realized_pnl;
+    double unrealized_pnl;
+    size_t total_positions;
+    std::vector<UserPosition> unresolved_positions;
+};
+
+
+struct UserAnalysisResult {
+    double realized = 0.0;
+    double unrealized = 0.0;
+    size_t num_pos = 0;
+    bool is_bot = false;
+};
+</file>
+
+<file path="PolymarketApiQueries.h">
+#pragma once
+#include "Models.h"
+#include <vector>
+#include <string>
+#include <unordered_map>
+#include <stdexcept>
+#include <iostream>
+#include <cpr/cpr.h>
+#include <thread>
+#include <chrono>
+#include <random>
+#include <mutex>
+#include <algorithm>
+#include <fstream>
+#include <nlohmann/json.hpp>
+
+class BotDetectedException : public std::runtime_error {
+public:
+    BotDetectedException(const std::string& msg) : std::runtime_error(msg) {}
+};
+
+class PolymarketApiQueries {
+public:
+    PolymarketApiQueries(const std::string& config_file = "config.json");
+
+    std::vector<std::string> getAssetIds(const std::string &tag_id) const;
+    std::vector<UserPosition> getUserPositions(const std::string& user_id) const;
+    std::unordered_map<std::string, GammaTokenData> getGammaTokenData(const std::vector<std::string>& token_ids) const;
+    std::unordered_map<std::string, double> getTokenPrices(const std::vector<std::string>& token_ids) const;
+    std::vector<TradeEvent> getMarketTradeHistory(const std::string& asset_id) const;
+    bool isBotAccount(const std::string& user_id) const;
+
+private:
+    template <typename Func, typename RateLimitFunc>
+
+    /// https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/#:~:text=Adding%20Backoff,delay%20has%20introduced%20some%20spreading.
+    cpr::Response executeWithRetry(Func request_func, RateLimitFunc rate_limit_func, double initial_backoff, const std::string& api_name) const{
+        cpr::Response r;
+        double temp_backoff = initial_backoff;
+        thread_local std::mt19937 generator(std::random_device{}());
+
+        for (int i = 0; i < max_retries; i++){
+            rate_limit_func();
+            r = request_func();
+
+            if(r.status_code == 200) return r;
+            if(r.status_code == 429 || r.status_code == 0 || r.status_code >= 500){
+                std::uniform_real_distribution<double> distribution(0.8, 1.2);
+                double jittered_backoff = temp_backoff * distribution(generator); // randomlize +-20%
+
+
+                std::cerr<<"rate limit hit .. retrying in "<<jittered_backoff<<"ms\n";
+
+                std::this_thread::sleep_for(std::chrono::duration<double, std::milli>(jittered_backoff));
+                temp_backoff *= backoff_rate;
+            } 
+            else{
+                throw std::runtime_error(api_name + " api error: " + std::to_string(r.status_code) + " - " + r.text);
+            }
+        }
+        throw std::runtime_error("Max retries exceeded for " + api_name);
+    }
+
+    void applyRateLimit(std::mutex& mtx, std::chrono::steady_clock::time_point& last_call, int backoff_ms) const;
+
+    std::string pnl_subgraph_url;
+    std::string orderbook_subgraph_url;
+    std::string gamma_base_url;
+    std::string clob_base_url;
+
+    int max_retries = 5;
+    int backoff_ms_goldsky = 200; // backoff timings based on the specific applications not generally applicable for api
+    int backoff_ms_clob = 10;
+    int backoff_ms_gamma = 35;
+    double backoff_rate = 1.25;
+
+    mutable std::mutex gamma_rate_mtx;
+    mutable std::chrono::steady_clock::time_point last_gamma_call = std::chrono::steady_clock::now();
+
+    mutable std::mutex clob_rate_mtx;
+    mutable std::chrono::steady_clock::time_point last_clob_call = std::chrono::steady_clock::now();
+
+    mutable std::mutex goldsky_rate_mtx;
+    mutable std::chrono::steady_clock::time_point last_goldsky_call = std::chrono::steady_clock::now();
+
+    
+};
+</file>
+
+<file path="UserStatsPipeline.cpp">
+#include "UserStatsPipeline.h"
+
+UserStatsPipeline::UserStatsPipeline(PolymarketApiQueries& api_ref, int goldsky_threads, int clob_threads, int gamma_threads)
+    : api(api_ref), num_goldsky(goldsky_threads), num_clob(clob_threads), num_gamma(gamma_threads) {}
+
+void UserStatsPipeline::startWorkers() {
+
+    // 1. goldsky (graphql user positions)
+    for(int i = 0; i < num_goldsky; i++){
+        goldsky_workers.emplace_back([this](){
+            UserQueryTask task;
+            while(goldsky_queue.wait_and_pop(task)){
+                try{
+                    if(api.isBotAccount(task.user_id)){
+                        finalizeUser(task.user_id, 0.0, 0.0, 0, false, true);
+                        continue;
+                    }
+
+                    auto positions = api.getUserPositions(task.user_id);
+                    size_t total_positions_count = positions.size();
+                    double realized = 0.0;
+                    std::vector<UserPosition> open_positions;
+                    
+                    for(const auto& pos : positions){
+                        realized += pos.realized_pnl;
+                        if (pos.amount > 0.0) open_positions.push_back(pos);
+                    }
+
+                    if(!open_positions.empty()){
+                        gamma_queue.push({task.user_id, realized, total_positions_count, open_positions});
+                    }
+                    else{
+                        finalizeUser(task.user_id, realized, 0, total_positions_count);
+                    }
+                }
+                catch(const std::exception& e){
+                    std::cerr << "[goldsky error] user " << task.user_id << ": " << e.what() << "\n";
+                    finalizeUser(task.user_id, 0.0, 0.0, 0, true);
+                }
+            }
+        });
+    }
+
+    // 2. gamma (market resolution data)
+    for(int i = 0; i < num_gamma; i++){
+        gamma_workers.emplace_back([this](){
+            GammaTask task;
+            while(gamma_queue.wait_and_pop(task)){
+                try{
+                    std::vector<std::string> token_ids;
+                    for (const auto& p : task.positions) token_ids.push_back(p.token_id);
+                    
+                    auto gamma_data = api.getGammaTokenData(token_ids);
+                    
+                    double resolved_unrealized = 0.0;
+                    std::vector<UserPosition> unresolved_positions;
+
+                    for(auto& pos : task.positions){
+                        if(gamma_data.count(pos.token_id) && gamma_data[pos.token_id].is_resolved){
+                            // market is finished.. final worth immediately
+                            double token_val = gamma_data[pos.token_id].is_winner ? 1.0 : 0.0;
+                            resolved_unrealized += (token_val - pos.avg_price) * pos.amount;
+                        }
+                        else{
+                            // market is still active
+                            if(gamma_data.count(pos.token_id)){
+                                pos.gamma_price = gamma_data[pos.token_id].price;
+                            }
+                            unresolved_positions.push_back(pos);
+                        }
+                    }
+
+
+                    if(!unresolved_positions.empty()){
+                        clob_queue.push({task.user_id, task.realized_pnl, resolved_unrealized,task.total_positions, unresolved_positions});
+                    }
+                    else{
+                        finalizeUser(task.user_id, task.realized_pnl, resolved_unrealized, task.total_positions);
+                    }
+                }
+                catch(const std::exception& e){
+                    std::cerr << "[gamma error] user " << task.user_id << ": " << e.what() << "\n";
+                    finalizeUser(task.user_id, 0.0, 0.0, 0, true);
+                }
+            }
+        });
+    }
+
+    // 3. clob (orderbook prices)
+    for(int i = 0; i < num_clob; ++i){
+        clob_workers.emplace_back([this](){
+            ClobTask task;
+            while(clob_queue.wait_and_pop(task)){
+                try{
+                    std::vector<std::string> token_ids;
+                    for(const auto& p : task.unresolved_positions) token_ids.push_back(p.token_id);
+                    
+                    auto prices = api.getTokenPrices(token_ids);
+                    
+                    double active_unrealized = 0.0;
+                    for(const auto& pos : task.unresolved_positions){
+                        double current_price = pos.gamma_price; // if market is dead it will use last trades price, if there is no last traded price then 0
+                        if (prices.count(pos.token_id)) {
+                            current_price = prices[pos.token_id];
+                        }
+                        active_unrealized += (current_price - pos.avg_price) * pos.amount;
+                    }
+                    
+                    double final_unrealized_pnl = task.unrealized_pnl + active_unrealized;
+
+                    finalizeUser(task.user_id, task.realized_pnl, final_unrealized_pnl, task.total_positions);
+                }
+                catch(const std::exception& e){
+                    std::cerr << "[clob error] user " << task.user_id << ": " << e.what() << "\n";
+                    finalizeUser(task.user_id, 0.0, 0.0, 0, true);
+                }
+            }
+        });
+    }
+}
+UserStatsPipeline::~UserStatsPipeline() {
+    goldsky_queue.set_done();
+    
+
+    for(auto& w : goldsky_workers){
+        if(w.joinable()) w.join();
+    }
+    gamma_queue.set_done();
+    
+    for(auto& w : gamma_workers){
+        if (w.joinable()) w.join();
+    }
+    clob_queue.set_done();
+    for(auto& w : clob_workers){
+        if (w.joinable()) w.join();
+    }
+}
+void UserStatsPipeline::finalizeUser(const std::string& user_id, double realized, double unrealized, size_t total_positions, bool is_error, bool is_bot){
+    {
+        std::lock_guard<std::mutex> lock(results_mtx);
+        if(!is_error) final_results[user_id] = {realized, unrealized, total_positions, is_bot}; 
+    }
+
+    int remaining = --active_tasks;
+    
+    if(remaining == 0){
+        std::lock_guard<std::mutex> lock(completion_mtx);
+        completion_cv.notify_all();
+    }
+}
+void UserStatsPipeline::processUsers(const std::vector<std::string>& users){
+    if (users.empty()) return;
+
+    active_tasks += static_cast<int>(users.size());
+
+    for(const auto& u : users){
+        goldsky_queue.push({u});
+    }
+
+
+    std::unique_lock<std::mutex> lock(completion_mtx);
+    completion_cv.wait(lock, [this]() { return active_tasks == 0; });
+    
+    std::cout << "batch finished computing" << "\n";
+}
+</file>
+
+<file path="PolymarketApiQueries.cpp">
+#include "PolymarketApiQueries.h"
+
+PolymarketApiQueries::PolymarketApiQueries(const std::string& config_file){
+    std::ifstream file(config_file);
+    if(!file.is_open()){
+        throw std::runtime_error("Error: could not open configuration file: " + config_file);
+    }
+
+    nlohmann::json config;
+    try{
+        file>>config;
+        
+        pnl_subgraph_url = config["goldsky"]["pnl_subgraph"].get<std::string>();
+        orderbook_subgraph_url = config["goldsky"]["orderbook_subgraph"].get<std::string>();
+        gamma_base_url = config["api"]["gamma"].get<std::string>();
+        clob_base_url = config["api"]["clob"].get<std::string>();
+        
+    }
+    catch(const nlohmann::json::exception& e){
+        throw std::runtime_error(std::string("Error parsing config: ") + e.what());
+    }
+}
+
+
+
+void PolymarketApiQueries::applyRateLimit(std::mutex& mtx, std::chrono::steady_clock::time_point& last_call, int backoff_ms) const{
+    std::chrono::milliseconds sleep_duration(0);
+    {
+        std::lock_guard<std::mutex> lock(mtx);
+        auto now = std::chrono::steady_clock::now();
+        auto target_time = last_call + std::chrono::milliseconds(backoff_ms);
+        
+        if(now < target_time){
+            sleep_duration = std::chrono::duration_cast<std::chrono::milliseconds>(target_time - now);
+            last_call = target_time; 
+        }
+        else{
+            last_call = now; 
+        }
+    }
+    if(sleep_duration.count() > 0){
+        std::this_thread::sleep_for(sleep_duration);
+    }
+}
+
+std::unordered_map<std::string, GammaTokenData> PolymarketApiQueries::getGammaTokenData(const std::vector<std::string>& token_ids) const{
+    std::unordered_map<std::string, GammaTokenData> results;
+    if(token_ids.empty()) return results;
+
+    const size_t BATCH_SIZE = 45;
+    thread_local cpr::Session session;
+
+    for(size_t i = 0; i < token_ids.size(); i += BATCH_SIZE){
+        std::string gamma_url = gamma_base_url + "?limit=100";
+        
+        for(size_t j = i; j < (std::min)(i + BATCH_SIZE, token_ids.size()); ++j){
+            gamma_url += "&clob_token_ids=" + token_ids[j];
+        }
+
+        session.SetUrl(cpr::Url(gamma_url));
+
+        
+        cpr::Response r = executeWithRetry([](){return session.Get();}, [&](){ applyRateLimit(gamma_rate_mtx, last_gamma_call, backoff_ms_gamma);}, backoff_ms_gamma, "gamma");
+
+        auto response = nlohmann::json::parse(r.text, nullptr, false);
+        if(response.is_discarded()){
+            std::cerr<<"received invalid json from api getGammaTokenData"<<"\n";
+            continue;
+        }
+        if(response.contains("errors")){
+            throw std::runtime_error("clob error in getGammaTokenData: " + response["errors"].dump());
+        }
+        for(const auto& market : response){
+            if(!market.contains("tokens")) continue;
+
+            for(const auto& token_info : market["tokens"]){
+                std::string token_id = token_info.value("token_id", "");
+                GammaTokenData data;
+                
+                data.is_resolved = market.value("resolved", false);
+                if(data.is_resolved){
+                    data.is_winner = token_info.value("winner", false);
+                }
+                else if(token_info.contains("price")){
+                    auto price_val = token_info["price"];
+                    data.price = price_val.is_number() ? price_val.get<double>() : std::stod(price_val.get<std::string>());
+                }
+                results[token_id] = data;
+            }
+        }
+    }
+    
+    return results;
+}
+std::unordered_map<std::string, double> PolymarketApiQueries::getTokenPrices(const std::vector<std::string>& token_ids) const{
+    std::unordered_map<std::string, double> prices;
+    if(token_ids.empty()) return prices;
+
+    const size_t BATCH_SIZE = 15;
+
+    thread_local cpr::Session session;
+    session.SetUrl(cpr::Url{clob_base_url + "/prices"});
+    session.SetHeader(cpr::Header{{"Content-Type", "application/json"}});
+
+
+    for(size_t i = 0; i < token_ids.size(); i += BATCH_SIZE){
+        
+    
+        nlohmann::json request_body = nlohmann::json::array();
+        for(size_t j = i; j < (std::min)(i + BATCH_SIZE, token_ids.size()); j++){
+            request_body.push_back({{"token_id", token_ids[j]}, {"side", "BUY"}});
+        }
+
+
+        session.SetBody(cpr::Body{request_body.dump()});
+
+
+        cpr::Response r = executeWithRetry([](){ return session.Post();}, [&](){ applyRateLimit(clob_rate_mtx, last_clob_call, backoff_ms_clob); }, backoff_ms_clob, "clob");
+
+        auto response = nlohmann::json::parse(r.text, nullptr, false);
+        if(response.is_discarded()){
+            std::cerr<<"received invalid json from api getTokenPrices"<<"\n";
+            continue;
+        }
+
+        if(response.contains("errors")){
+            throw std::runtime_error("clob error in getTokenPrices: " + response["errors"].dump());
+        }
+        for(size_t j = i; j < (std::min)(i + BATCH_SIZE, token_ids.size()); j++){
+            const auto& id = token_ids[j];
+            if(response.contains(id) && response[id].contains("BUY") && !response[id]["BUY"].is_null()){
+                auto val = response[id]["BUY"];
+                prices[id] = val.is_string() ? std::stod(val.get<std::string>()) : val.get<double>();
+            }
+        }
+    }
+    return prices;
+}
+std::vector<UserPosition> PolymarketApiQueries::getUserPositions(const std::string& user_id) const{
+    std::vector<UserPosition> ret;
+    std::string last_id = "";
+    int positions_size = 200;
+    const double USD_CONVERSION = 1e6;
+
+
+    thread_local cpr::Session session;
+    session.SetUrl(cpr::Url{pnl_subgraph_url});
+    session.SetHeader(cpr::Header{{"Content-Type", "application/json"}});
+    std::string query = R"(
+        query getPL($user: String!, $lastId: String!, $positionsSize: Int!) { 
+            userPositions(first: positionsSize, orderBy: id, orderDirection: asc, where: { id_gt: $lastId, user: $user }) {
+                id realizedPnl tokenId amount avgPrice
+            }
+        }
+    )";
+
+    while(true){
+        std::string id_filter = last_id.empty() ? "" : "id_gt: \"" + last_id + "\", ";
+        nlohmann::json request_body = {
+            {"query", query},
+            {"variables", {
+            {"user", user_id},
+            {"lastId", last_id},
+            {"positionsSize", positions_size}
+            }}
+        };
+        session.SetBody(cpr::Body{request_body.dump()});
+
+        
+
+        cpr::Response r = executeWithRetry([](){ return session.Post(); }, [&](){applyRateLimit(goldsky_rate_mtx, last_goldsky_call, backoff_ms_goldsky);}, backoff_ms_goldsky, "goldsky-pnl");
+
+        auto response = nlohmann::json::parse(r.text, nullptr, false);
+        if(response.is_discarded()){
+            std::cerr<<"received invalid json from api getGammaTokenData"<<"\n";
+            continue;
+        }
+
+        if(response.contains("errors")){
+            throw std::runtime_error("Graph error in getUserPositions: " + response["errors"].dump());
+        }
+
+        if(!response.contains("data") || !response["data"].contains("userPositions") || response["data"]["userPositions"].is_null()){
+             std::cerr<<"unexpected graphql structure: "<<user_id<<"\n";
+             break;
+        }
+
+        auto positions = response["data"]["userPositions"];
+        for(const auto& pos : positions){
+            UserPosition ps;
+            ps.token_id = pos.value("tokenId", "");
+            ps.amount = std::stod(pos.value("amount", "0")) / USD_CONVERSION; 
+            ps.avg_price = std::stod(pos.value("avgPrice", "0")) / USD_CONVERSION;
+            ps.realized_pnl = std::stod(pos.value("realizedPnl", "0")) / USD_CONVERSION;
+            ret.push_back(ps);
+        }
+        if(positions.size() < positions_size) break;
+        last_id = positions.back()["id"].get<std::string>();
+
+    }
+    return ret;
+}
+bool PolymarketApiQueries::isBotAccount(const std::string& user_id) const {
+    const size_t BURST_POSITION_COUNT = 20;
+    const uint64_t BURST_TIME_WINDOW_SEC = 2;
+    const size_t MACRO_POSITION_COUNT = 1000;
+    const uint64_t MACRO_TIME_WINDOW_SEC = 60*60*24*5;
+    
+    thread_local cpr::Session session;
+    session.SetUrl(cpr::Url{pnl_subgraph_url});
+    session.SetHeader(cpr::Header{{"Content-Type", "application/json"}});
+
+    std::string query = R"(query getBotSample($user: String!){
+        userPositions(first: 1000, orderBy: timestamp, orderDirection: desc, where: { user: $user }){timestamp}
+    })";
+    
+    nlohmann::json request_body = {
+        {"query", query},
+        {"variables", {{"user", user_id}}}
+    };
+    session.SetBody(cpr::Body{request_body.dump()});
+
+    cpr::Response r = executeWithRetry([](){ return session.Post(); }, [&](){applyRateLimit(goldsky_rate_mtx, last_goldsky_call, backoff_ms_goldsky);}, backoff_ms_goldsky, "goldsky-pnl");
+    
+    auto response = nlohmann::json::parse(r.text, nullptr, false);
+    if(response.is_discarded() || response.contains("errors") || !response.contains("data")) return false; // Default to human on network error
+
+    auto positions = response["data"]["userPositions"];
+    if(positions.empty()) return false;
+
+    std::vector<uint64_t> timestamps;
+    timestamps.reserve(positions.size());
+    for(const auto& pos : positions){
+        if(!pos["timestamp"].is_null()){
+            timestamps.push_back(std::stoull(pos["timestamp"].get<std::string>()));
+        }
+    }
+    if(timestamps.size() == 1000){
+        uint64_t newest_ts = timestamps.front();
+        uint64_t oldest_ts = timestamps.back();
+        
+        if((newest_ts - oldest_ts) <= MACRO_TIME_WINDOW_SEC){
+            return true;
+        }
+    }
+    if(timestamps.size() >= BURST_POSITION_COUNT){
+        for(size_t i = 0; i <= timestamps.size() - BURST_POSITION_COUNT; ++i){
+            uint64_t newest_ts = timestamps[i];
+            uint64_t oldest_ts = timestamps[i + BURST_POSITION_COUNT - 1];
+            
+            if((newest_ts - oldest_ts) <= BURST_TIME_WINDOW_SEC){
+                return true;
+            }
+        }
+    }
+    
+    return false;
+}
+std::vector<std::string> PolymarketApiQueries::getAssetIds(const std::string &tag_id) const{
+    std::vector<std::string> res;
+
+    cpr::Session session;
+    session.SetUrl(cpr::Url{orderbook_subgraph_url});
+    session.SetHeader(cpr::Header{{"Content-Type", "application/json"}});
+
+    std::string last_id = "";
+    std::string query = R"(query get($lastId: String!) {conditions(first: 1000, orderBy: id, orderDirection: asc, where: { id_gt: $lastId, resolved: true }) {id}})";
+
+
+    int limit = 100;
+    int offset = 0;
+    int totalEventsFetched = 0;
+    bool hasMoreData = true;
+
+
+    while(true){
+        nlohmann::json request_body = {
+            {"query", query},
+            {"variables", {
+                {"lastId", last_id}
+            }}
+        };
+        session.SetBody(cpr::Body{request_body.dump()});
+
+        cpr::Response r = executeWithRetry([&session](){return session.Post();}, [&](){applyRateLimit(goldsky_rate_mtx, last_goldsky_call, backoff_ms_goldsky);}, backoff_ms_goldsky, "goldsky-market_ids");
+
+        auto json_data = nlohmann::json::parse(r.text, nullptr, false);
+        if(json_data.is_discarded()){
+            std::cerr<<"received invalid json from api getGammaTokenData"<<"\n";
+            continue;
+        }
+        
+        if(json_data.contains("errors")){
+            std::cerr<<"graphql error in getMarketTradeHistory: "<<json_data["errors"].dump()<<"\n";
+            break;
+        }
+        auto conditions = json_data["data"]["conditions"];
+
+        if(conditions.empty()){
+            break; 
+        }
+
+        for(const auto& condition : conditions){
+            res.push_back(condition["id"].get<std::string>());
+        }
+
+        last_id = conditions.back()["id"].get<std::string>();
+    }
+    return res;
+}
+std::vector<TradeEvent> PolymarketApiQueries::getMarketTradeHistory(const std::string& asset_id) const{
+    std::vector<TradeEvent> trades;
+    const double USD_CONVERSION = 1e6;
+    cpr::Session session;
+    session.SetUrl(cpr::Url{orderbook_subgraph_url});
+    session.SetHeader(cpr::Header{{"Content-Type", "application/json"}});
+
+    auto fetchTrades = [&](const std::string& side){ // querying only one side at a time may improve performance
+        std::string last_id = "";
+        std::string asset_field = side + "AssetId";
+        
+        while(true){
+            std::string id_filter = last_id.empty() ? "" : "id_gt: \"" + last_id + "\", ";
+
+            std::string graphql_query = R"(
+                query GetTrades($assetId: String!, $lastId: String!) {
+                    orderFilledEvents(
+                        first: 1000, 
+                        orderBy: id, 
+                        orderDirection: asc, 
+                        where: { )" + asset_field + R"(: $assetId, id_gt: $lastId }
+                    ) {
+                        id timestamp maker taker makerAssetId makerAmountFilled takerAssetId takerAmountFilled
+                    }
+                }
+            )";
+            
+            nlohmann::json request_body = {
+                {"query", graphql_query},
+                {"variables", {
+                    {"assetId", asset_id},
+                    {"lastId", last_id}
+                }}
+            };
+            session.SetBody(cpr::Body{request_body.dump()});
+            cpr::Response r = executeWithRetry([&session](){return session.Post();}, [&](){applyRateLimit(goldsky_rate_mtx, last_goldsky_call, backoff_ms_goldsky);}, backoff_ms_goldsky, "goldsky-market_history");
+
+            auto json_data = nlohmann::json::parse(r.text, nullptr, false);
+            if(json_data.is_discarded()){
+                std::cerr<<"received invalid json from api getGammaTokenData"<<"\n";
+                continue;
+            }
+            
+            if(json_data.contains("errors")){
+                std::cerr<<"graphql error in getMarketTradeHistory: "<<json_data["errors"].dump()<<"\n";
+                break;
+            }
+            
+            auto trades_array = json_data["data"]["orderFilledEvents"]; 
+            for(const auto& item : trades_array){
+                TradeEvent event;
+                event.timestamp = std::stoull(item["timestamp"].get<std::string>());
+                event.asset_id = asset_id;
+                event.maker_id = item["maker"].get<std::string>();
+                event.taker_id = item["taker"].get<std::string>();
+                
+                last_id = item["id"].get<std::string>();
+                std::string maker_asset = item["makerAssetId"].get<std::string>();
+                double maker_amount = std::stod(item["makerAmountFilled"].get<std::string>());
+                double taker_amount = std::stod(item["takerAmountFilled"].get<std::string>());
+                double usdc_amount = 0;
+                double token_amount = 0;
+                if(maker_asset == "0"){ // usdc
+                    usdc_amount = maker_amount;
+                    token_amount = taker_amount;
+                    event.is_buyer_maker = true; 
+                }
+                else{
+                    usdc_amount = taker_amount;
+                    token_amount = maker_amount;
+                    event.is_buyer_maker = false; 
+                }
+                if(token_amount > 0) event.price = usdc_amount / token_amount;
+                else std::cerr<<"token_amount is 0 in get_trade_history"<<"\n";
+                event.size = token_amount / USD_CONVERSION; 
+                trades.push_back(event);
+            }
+            
+            std::cout<<side<<" batches fetched, current total: "<<trades.size()<<"\n";
+            
+            if(trades_array.size() < 1000) break;
+            
+        }
+    };
+    fetchTrades("maker");
+    fetchTrades("taker");
+    std::sort(trades.begin(), trades.end(), [](const TradeEvent& a, const TradeEvent& b){
+        return a.timestamp < b.timestamp;
+    });
+    return trades;
+}
+</file>
+
+</files>

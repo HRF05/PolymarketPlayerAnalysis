@@ -21,6 +21,8 @@ PolymarketApiQueries::PolymarketApiQueries(const std::string& config_file){
     }
 }
 
+
+
 void PolymarketApiQueries::applyRateLimit(std::mutex& mtx, std::chrono::steady_clock::time_point& last_call, int backoff_ms) const{
     std::chrono::milliseconds sleep_duration(0);
     {
@@ -45,7 +47,7 @@ std::unordered_map<std::string, GammaTokenData> PolymarketApiQueries::getGammaTo
     std::unordered_map<std::string, GammaTokenData> results;
     if(token_ids.empty()) return results;
 
-    const size_t BATCH_SIZE = 20;
+    const size_t BATCH_SIZE = 45;
     thread_local cpr::Session session;
 
     for(size_t i = 0; i < token_ids.size(); i += BATCH_SIZE){
@@ -85,10 +87,6 @@ std::unordered_map<std::string, GammaTokenData> PolymarketApiQueries::getGammaTo
                 }
                 results[token_id] = data;
             }
-        }
-        
-        if(i + BATCH_SIZE < token_ids.size()){
-            std::this_thread::sleep_for(std::chrono::milliseconds(200));
         }
     }
     
@@ -148,13 +146,23 @@ std::vector<UserPosition> PolymarketApiQueries::getUserPositions(const std::stri
     thread_local cpr::Session session;
     session.SetUrl(cpr::Url{pnl_subgraph_url});
     session.SetHeader(cpr::Header{{"Content-Type", "application/json"}});
+    std::string query = R"(
+        query getPL($user: String!, $lastId: String!, $positionsSize: Int!) { 
+            userPositions(first: $positionsSize, orderBy: id, orderDirection: asc, where: { id_gt: $lastId, user: $user }) {
+                id realizedPnl tokenId amount avgPrice
+            }
+        }
+    )";
 
     while(true){
         std::string id_filter = last_id.empty() ? "" : "id_gt: \"" + last_id + "\", ";
-        std::string graphql_query = R"(query getPL($user: String!){ userPositions(first: )" + std::to_string(positions_size) + R"(,orderBy: id, orderDirection: asc, where: { )" + id_filter + R"(user: $user }){id realizedPnl tokenId amount avgPrice}})";
         nlohmann::json request_body = {
-            {"query", graphql_query},
-            {"variables", {{"user", user_id}}}
+            {"query", query},
+            {"variables", {
+            {"user", user_id},
+            {"lastId", last_id},
+            {"positionsSize", positions_size}
+            }}
         };
         session.SetBody(cpr::Body{request_body.dump()});
 
@@ -202,12 +210,12 @@ bool PolymarketApiQueries::isBotAccount(const std::string& user_id) const {
     session.SetUrl(cpr::Url{pnl_subgraph_url});
     session.SetHeader(cpr::Header{{"Content-Type", "application/json"}});
 
-    std::string graphql_query = R"(query getBotSample($user: String!){
+    std::string query = R"(query getBotSample($user: String!){
         userPositions(first: 1000, orderBy: timestamp, orderDirection: desc, where: { user: $user }){timestamp}
     })";
     
     nlohmann::json request_body = {
-        {"query", graphql_query},
+        {"query", query},
         {"variables", {{"user", user_id}}}
     };
     session.SetBody(cpr::Body{request_body.dump()});
@@ -248,10 +256,60 @@ bool PolymarketApiQueries::isBotAccount(const std::string& user_id) const {
     
     return false;
 }
+std::vector<std::string> PolymarketApiQueries::getAssetIds(const std::string &tag_id) const{
+    std::vector<std::string> res;
 
-std::vector<tradeEvent> PolymarketApiQueries::getMarketTradeHistory(const std::string& asset_id) const{
-    std::vector<tradeEvent> trades;
-    trades.reserve(50000);
+    cpr::Session session;
+    session.SetUrl(cpr::Url{orderbook_subgraph_url});
+    session.SetHeader(cpr::Header{{"Content-Type", "application/json"}});
+
+    std::string last_id = "";
+    std::string query = R"(query get($lastId: String!) {conditions(first: 1000, orderBy: id, orderDirection: asc, where: { id_gt: $lastId, resolved: true }) {id}})";
+
+
+    int limit = 100;
+    int offset = 0;
+    int totalEventsFetched = 0;
+    bool hasMoreData = true;
+
+
+    while(true){
+        nlohmann::json request_body = {
+            {"query", query},
+            {"variables", {
+                {"lastId", last_id}
+            }}
+        };
+        session.SetBody(cpr::Body{request_body.dump()});
+
+        cpr::Response r = executeWithRetry([&session](){return session.Post();}, [&](){applyRateLimit(goldsky_rate_mtx, last_goldsky_call, backoff_ms_goldsky);}, backoff_ms_goldsky, "goldsky-market_ids");
+
+        auto json_data = nlohmann::json::parse(r.text, nullptr, false);
+        if(json_data.is_discarded()){
+            std::cerr<<"received invalid json from api getGammaTokenData"<<"\n";
+            continue;
+        }
+        
+        if(json_data.contains("errors")){
+            std::cerr<<"graphql error in getMarketTradeHistory: "<<json_data["errors"].dump()<<"\n";
+            break;
+        }
+        auto conditions = json_data["data"]["conditions"];
+
+        if(conditions.empty()){
+            break; 
+        }
+
+        for(const auto& condition : conditions){
+            res.push_back(condition["id"].get<std::string>());
+        }
+
+        last_id = conditions.back()["id"].get<std::string>();
+    }
+    return res;
+}
+std::vector<TradeEvent> PolymarketApiQueries::getMarketTradeHistory(const std::string& asset_id) const{
+    std::vector<TradeEvent> trades;
     const double USD_CONVERSION = 1e6;
     cpr::Session session;
     session.SetUrl(cpr::Url{orderbook_subgraph_url});
@@ -259,20 +317,33 @@ std::vector<tradeEvent> PolymarketApiQueries::getMarketTradeHistory(const std::s
 
     auto fetchTrades = [&](const std::string& side){ // querying only one side at a time may improve performance
         std::string last_id = "";
+        std::string asset_field = side + "AssetId";
         
         while(true){
             std::string id_filter = last_id.empty() ? "" : "id_gt: \"" + last_id + "\", ";
 
-            std::string graphql_query = 
-            "{ orderFilledEvents(first: 1000, orderBy: id, orderDirection: asc, where: { "
-            + id_filter + side + "AssetId: \"" + asset_id + "\" }) "
-            "{ id timestamp maker taker makerAssetId makerAmountFilled takerAssetId takerAmountFilled } }";
+            std::string graphql_query = R"(
+                query GetTrades($assetId: String!, $lastId: String!) {
+                    orderFilledEvents(
+                        first: 1000, 
+                        orderBy: id, 
+                        orderDirection: asc, 
+                        where: { )" + asset_field + R"(: $assetId, id_gt: $lastId }
+                    ) {
+                        id timestamp maker taker makerAssetId makerAmountFilled takerAssetId takerAmountFilled
+                    }
+                }
+            )";
             
             nlohmann::json request_body = {
-                {"query", graphql_query}
+                {"query", graphql_query},
+                {"variables", {
+                    {"assetId", asset_id},
+                    {"lastId", last_id}
+                }}
             };
             session.SetBody(cpr::Body{request_body.dump()});
-            cpr::Response r = executeWithRetry([&session](){return session.Post();}, [](){std::this_thread::sleep_for(std::chrono::milliseconds(200));}, backoff_ms_goldsky, "goldsky-market_history");
+            cpr::Response r = executeWithRetry([&session](){return session.Post();}, [&](){applyRateLimit(goldsky_rate_mtx, last_goldsky_call, backoff_ms_goldsky);}, backoff_ms_goldsky, "goldsky-market_history");
 
             auto json_data = nlohmann::json::parse(r.text, nullptr, false);
             if(json_data.is_discarded()){
@@ -287,7 +358,7 @@ std::vector<tradeEvent> PolymarketApiQueries::getMarketTradeHistory(const std::s
             
             auto trades_array = json_data["data"]["orderFilledEvents"]; 
             for(const auto& item : trades_array){
-                tradeEvent event;
+                TradeEvent event;
                 event.timestamp = std::stoull(item["timestamp"].get<std::string>());
                 event.asset_id = asset_id;
                 event.maker_id = item["maker"].get<std::string>();
@@ -323,7 +394,7 @@ std::vector<tradeEvent> PolymarketApiQueries::getMarketTradeHistory(const std::s
     };
     fetchTrades("maker");
     fetchTrades("taker");
-    std::sort(trades.begin(), trades.end(), [](const tradeEvent& a, const tradeEvent& b){
+    std::sort(trades.begin(), trades.end(), [](const TradeEvent& a, const TradeEvent& b){
         return a.timestamp < b.timestamp;
     });
     return trades;

@@ -27,7 +27,7 @@ int main() {
         PolymarketApiQueries api("config.json");
 
         ManageFileData::marketFileAdd(api.getMarketTradeHistory(asset_id), asset_id);
-        std::vector<tradeEvent> trades = ManageFileData::marketFileGet(asset_id);
+        std::vector<TradeEvent> trades = ManageFileData::marketFileGet(asset_id);
 
         UserStatsPipeline pipeline(api);
         

@@ -45,7 +45,7 @@ std::unordered_map<std::string, UserAnalysisResult> ManageFileData::usersFileGet
     return ret;
 }
 
-void ManageFileData::marketFileAdd(const std::vector<tradeEvent>& trades, const std::string& asset_id){
+void ManageFileData::marketFileAdd(const std::vector<TradeEvent>& trades, const std::string& asset_id){
     std::filesystem::create_directories("./data");
     std::string filename = "./data/market-" + asset_id + ".csv";
     std::ofstream outFile(filename);
@@ -65,8 +65,8 @@ void ManageFileData::marketFileAdd(const std::vector<tradeEvent>& trades, const 
     }
 }
 
-std::vector<tradeEvent> ManageFileData::marketFileGet(const std::string& asset_id){
-    std::vector<tradeEvent> trades;
+std::vector<TradeEvent> ManageFileData::marketFileGet(const std::string& asset_id){
+    std::vector<TradeEvent> trades;
     std::string filename = "./data/market-" + asset_id + ".csv";
     
     if(!std::filesystem::exists(filename)){
@@ -86,7 +86,7 @@ std::vector<tradeEvent> ManageFileData::marketFileGet(const std::string& asset_i
     while(std::getline(file, line)){
         if(line.empty()) continue;
 
-        tradeEvent row;
+        TradeEvent row;
         size_t start = 0;
         size_t end = 0;
 

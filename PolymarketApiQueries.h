@@ -23,10 +23,11 @@ class PolymarketApiQueries {
 public:
     PolymarketApiQueries(const std::string& config_file = "config.json");
 
+    std::vector<std::string> getAssetIds(const std::string &tag_id) const;
     std::vector<UserPosition> getUserPositions(const std::string& user_id) const;
     std::unordered_map<std::string, GammaTokenData> getGammaTokenData(const std::vector<std::string>& token_ids) const;
     std::unordered_map<std::string, double> getTokenPrices(const std::vector<std::string>& token_ids) const;
-    std::vector<tradeEvent> getMarketTradeHistory(const std::string& asset_id) const;
+    std::vector<TradeEvent> getMarketTradeHistory(const std::string& asset_id) const;
     bool isBotAccount(const std::string& user_id) const;
 
 private:

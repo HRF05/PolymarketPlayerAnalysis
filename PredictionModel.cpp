@@ -1,13 +1,13 @@
 #include "PredictionModel.h"
 
-bool PredictionModel::IsCredible(UserAnalysisResult pnl){
+bool PredictionModel::isCredible(UserAnalysisResult pnl){
     if(pnl.realized + pnl.unrealized > 1000) return true;
     if(pnl.is_bot == true) return true;
     if(pnl.num_pos == 1) return true; // if this is their only position not enough data.. Maybe could remove this
     return false;
 }
 
-std::vector<double> PredictionModel::ImpliedOddsFromNonCredibleUsers(const std::vector<tradeEvent>& market_history, const std::unordered_map<std::string, UserAnalysisResult>& user_stats){
+std::vector<double> PredictionModel::impliedOddsFromNonCredibleUsers(const std::vector<TradeEvent>& market_history, const std::unordered_map<std::string, UserAnalysisResult>& user_stats){
     std::vector<double> res;
     res.reserve(market_history.size());
     double yes_weighted_volume = 0.0;
@@ -15,8 +15,8 @@ std::vector<double> PredictionModel::ImpliedOddsFromNonCredibleUsers(const std::
     for(auto& trade : market_history){
         UserAnalysisResult maker_res = user_stats.at(trade.maker_id), taker_res = user_stats.at(trade.taker_id);
 
-        bool cmaker = IsCredible(maker_res);
-        bool ctaker = IsCredible(taker_res);
+        bool cmaker = isCredible(maker_res);
+        bool ctaker = isCredible(taker_res);
 
         double yes_cost = trade.size * trade.price;
         double no_cost = trade.size * (1.0 - trade.price);
@@ -49,9 +49,9 @@ std::vector<double> PredictionModel::ImpliedOddsFromNonCredibleUsers(const std::
     return res;
 }
 
-std::vector<double> PredictionModel::GeneratePredictedOdds(const std::vector<tradeEvent>& market_history, const std::unordered_map<std::string, UserAnalysisResult>& user_stats, double WEIGHT){
+std::vector<double> PredictionModel::generatePredictedOdds(const std::vector<TradeEvent>& market_history, const std::unordered_map<std::string, UserAnalysisResult>& user_stats, double WEIGHT){
 
-    std::vector<double> impliedOddsNC = ImpliedOddsFromNonCredibleUsers(market_history, user_stats);
+    std::vector<double> impliedOddsNC = impliedOddsFromNonCredibleUsers(market_history, user_stats);
     std::vector<double> res;
     res.reserve(market_history.size());
     for(int i = 0; i < market_history.size(); i++){ // using last sale as market price may be suboptimal
