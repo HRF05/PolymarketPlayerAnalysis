@@ -4,7 +4,7 @@
         "orderbook_subgraph": "https://api.goldsky.com/api/public/project_cl6mb8i9h0003e201j6li0diw/subgraphs/orderbook-subgraph/0.0.1/gn"
     },
     "api":{
-        "gamma": "https://gamma-api.polymarket.com/markets",
+        "gamma": "https://gamma-api.polymarket.com",
         "clob": "https://clob.polymarket.com"
     }
 }

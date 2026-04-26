@@ -32,7 +32,6 @@ public:
 
 private:
     template <typename Func, typename RateLimitFunc>
-
     /// https://aws.amazon.com/blogs/architecture/exponential-backoff-and-jitter/#:~:text=Adding%20Backoff,delay%20has%20introduced%20some%20spreading.
     cpr::Response executeWithRetry(Func request_func, RateLimitFunc rate_limit_func, double initial_backoff, const std::string& api_name) const{
         cpr::Response r;
@@ -70,7 +69,7 @@ private:
 
     int max_retries = 5;
     int backoff_ms_goldsky = 200; // backoff timings based on the specific applications not generally applicable for api
-    int backoff_ms_clob = 10;
+    int backoff_ms_clob = 20;
     int backoff_ms_gamma = 35;
     double backoff_rate = 1.25;
 

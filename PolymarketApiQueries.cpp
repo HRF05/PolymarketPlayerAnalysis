@@ -12,6 +12,7 @@ PolymarketApiQueries::PolymarketApiQueries(const std::string& config_file){
         
         pnl_subgraph_url = config["goldsky"]["pnl_subgraph"].get<std::string>();
         orderbook_subgraph_url = config["goldsky"]["orderbook_subgraph"].get<std::string>();
+
         gamma_base_url = config["api"]["gamma"].get<std::string>();
         clob_base_url = config["api"]["clob"].get<std::string>();
         
@@ -51,7 +52,7 @@ std::unordered_map<std::string, GammaTokenData> PolymarketApiQueries::getGammaTo
     thread_local cpr::Session session;
 
     for(size_t i = 0; i < token_ids.size(); i += BATCH_SIZE){
-        std::string gamma_url = gamma_base_url + "?limit=100";
+        std::string gamma_url = gamma_base_url + "/markets" +  "?limit=100";
         
         for(size_t j = i; j < (std::min)(i + BATCH_SIZE, token_ids.size()); ++j){
             gamma_url += "&clob_token_ids=" + token_ids[j];
@@ -118,6 +119,7 @@ std::unordered_map<std::string, double> PolymarketApiQueries::getTokenPrices(con
         cpr::Response r = executeWithRetry([](){ return session.Post();}, [&](){ applyRateLimit(clob_rate_mtx, last_clob_call, backoff_ms_clob); }, backoff_ms_clob, "clob");
 
         auto response = nlohmann::json::parse(r.text, nullptr, false);
+
         if(response.is_discarded()){
             std::cerr<<"received invalid json from api getTokenPrices"<<"\n";
             continue;
@@ -126,10 +128,11 @@ std::unordered_map<std::string, double> PolymarketApiQueries::getTokenPrices(con
         if(response.contains("errors")){
             throw std::runtime_error("clob error in getTokenPrices: " + response["errors"].dump());
         }
-        for(size_t j = i; j < (std::min)(i + BATCH_SIZE, token_ids.size()); j++){
-            const auto& id = token_ids[j];
-            if(response.contains(id) && response[id].contains("BUY") && !response[id]["BUY"].is_null()){
-                auto val = response[id]["BUY"];
+        
+        for(const auto& item : response){
+            if(item.contains("token_id") && item.contains("price") && !item["price"].is_null()){
+                std::string id = item["token_id"];
+                auto val = item["price"];
                 prices[id] = val.is_string() ? std::stod(val.get<std::string>()) : val.get<double>();
             }
         }
@@ -257,56 +260,47 @@ bool PolymarketApiQueries::isBotAccount(const std::string& user_id) const {
     return false;
 }
 std::vector<std::string> PolymarketApiQueries::getAssetIds(const std::string &tag_id) const{
-    std::vector<std::string> res;
+    std::vector<std::string> asset_ids;
 
-    cpr::Session session;
-    session.SetUrl(cpr::Url{orderbook_subgraph_url});
-    session.SetHeader(cpr::Header{{"Content-Type", "application/json"}});
-
-    std::string last_id = "";
-    std::string query = R"(query get($lastId: String!) {conditions(first: 1000, orderBy: id, orderDirection: asc, where: { id_gt: $lastId, resolved: true }) {id}})";
+    std::string url = gamma_base_url + "/events";
 
 
-    int limit = 100;
-    int offset = 0;
-    int totalEventsFetched = 0;
-    bool hasMoreData = true;
+    thread_local cpr::Session session;
 
+    session.SetUrl(url);
+    session.SetParameters(cpr::Parameters{{"active", "true"}, {"closed", "false"}, {"tag_id", tag_id}});
+    cpr::Response r = executeWithRetry([](){return session.Get();}, [&](){ applyRateLimit(gamma_rate_mtx, last_gamma_call, backoff_ms_gamma);}, backoff_ms_gamma, "gamma");
 
-    while(true){
-        nlohmann::json request_body = {
-            {"query", query},
-            {"variables", {
-                {"lastId", last_id}
-            }}
-        };
-        session.SetBody(cpr::Body{request_body.dump()});
+    auto response = nlohmann::json::parse(r.text, nullptr, false);
 
-        cpr::Response r = executeWithRetry([&session](){return session.Post();}, [&](){applyRateLimit(goldsky_rate_mtx, last_goldsky_call, backoff_ms_goldsky);}, backoff_ms_goldsky, "goldsky-market_ids");
-
-        auto json_data = nlohmann::json::parse(r.text, nullptr, false);
-        if(json_data.is_discarded()){
-            std::cerr<<"received invalid json from api getGammaTokenData"<<"\n";
-            continue;
-        }
-        
-        if(json_data.contains("errors")){
-            std::cerr<<"graphql error in getMarketTradeHistory: "<<json_data["errors"].dump()<<"\n";
-            break;
-        }
-        auto conditions = json_data["data"]["conditions"];
-
-        if(conditions.empty()){
-            break; 
-        }
-
-        for(const auto& condition : conditions){
-            res.push_back(condition["id"].get<std::string>());
-        }
-
-        last_id = conditions.back()["id"].get<std::string>();
+    if(response.is_discarded()){
+        std::cerr<<"received invalid json from api getAssetIds"<<"\n";
+        return asset_ids;
     }
-    return res;
+    if(response.contains("errors")){
+        throw std::runtime_error("clob error in getAssetIds: " + response["errors"].dump());
+    }
+    for(const auto& market : response){
+        if(!market.contains("markets")) continue;
+
+        for(const auto& markett : market["markets"]){
+            if(!markett.contains("clobTokenIds")) continue;
+
+            std::string clob_str = markett["clobTokenIds"].get<std::string>();
+            
+            auto clob_array = nlohmann::json::parse(clob_str, nullptr, false);
+            
+            if(!clob_array.is_discarded() && clob_array.is_array()){
+                for(const auto& asset_id : clob_array){
+                    asset_ids.push_back(asset_id.get<std::string>());
+                }
+            }
+            else{
+                std::cerr<<"getAssetIds .?\n";
+            }
+        }
+    }
+    return asset_ids;
 }
 std::vector<TradeEvent> PolymarketApiQueries::getMarketTradeHistory(const std::string& asset_id) const{
     std::vector<TradeEvent> trades;
@@ -320,8 +314,6 @@ std::vector<TradeEvent> PolymarketApiQueries::getMarketTradeHistory(const std::s
         std::string asset_field = side + "AssetId";
         
         while(true){
-            std::string id_filter = last_id.empty() ? "" : "id_gt: \"" + last_id + "\", ";
-
             std::string graphql_query = R"(
                 query GetTrades($assetId: String!, $lastId: String!) {
                     orderFilledEvents(
@@ -347,7 +339,7 @@ std::vector<TradeEvent> PolymarketApiQueries::getMarketTradeHistory(const std::s
 
             auto json_data = nlohmann::json::parse(r.text, nullptr, false);
             if(json_data.is_discarded()){
-                std::cerr<<"received invalid json from api getGammaTokenData"<<"\n";
+                std::cerr<<"received invalid json from api getMarketTradeHistory"<<"\n";
                 continue;
             }
             
