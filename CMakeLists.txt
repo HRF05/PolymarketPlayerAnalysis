@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(PolymarketAnalysis CXX)
+project(PolymarketDataGathering CXX)
 
 cmake_policy(SET CMP0135 NEW)
 
@@ -33,10 +33,8 @@ find_package(Threads REQUIRED)
 add_executable(${PROJECT_NAME}
   src/main.cpp
   src/PolymarketApiQueries.cpp
-  src/StrategyAnalysis.cpp
   src/UserStatsPipeline.cpp
   src/ManageFileData.cpp 
-  src/PredictionModel.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -46,8 +44,3 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     nlohmann_json::nlohmann_json
     Threads::Threads
 )
-
-
-#
-enable_testing()
-add_subdirectory(tests)
