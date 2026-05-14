@@ -1,23 +1,19 @@
 #include "ManageFileData.h"
 
 void ManageFileData::usersFileAdd(const std::unordered_map<std::string, UserAnalysisResult> &user_result, const std::string &user_filename){
-    std::string filename = "./data/users_temp_" + std::to_string(std::hash<std::thread::id>{}(std::this_thread::get_id())) + ".csv";
-    {
-        std::ofstream file(filename);
-        if (!file.is_open()) return; 
-        
-        file << "user_id,num_pos,realzied,unrealized\n";
-        for(const auto& user : user_result){
-            file << user.first << "," << user.second.num_pos << "," << user.second.realized << "," << user.second.unrealized << "\n";
-        }
+    std::ofstream file(user_filename);
+    if(!file.is_open()){
+        std::cerr<<"usersFileAdd, file open failed\n";
+        return;
     }
-    std::error_code ec;
-    std::filesystem::rename(filename, user_filename, ec); // atomic
-    if(ec){
-        std::cerr << "error renaming file: " << ec.message() << "\n";
-        std::filesystem::remove(filename); 
+    file<<"user_id,num_pos,realzied,unrealized,is_bot\n";
+    for(const std::pair<std::string, UserAnalysisResult>& res : user_result){
+        file<<res.first<<","
+            <<res.second.num_pos<<","
+            <<res.second.realized<<","
+            <<res.second.unrealized<<","
+            <<res.second.is_bot<<"\n";
     }
-    return;
 }
 
 std::unordered_map<std::string, UserAnalysisResult> ManageFileData::usersFileGet(const std::string &user_filename){
@@ -50,18 +46,18 @@ void ManageFileData::marketFileAdd(const std::vector<TradeEvent>& trades, const 
     std::string filename = "./data/market-" + asset_id + ".csv";
     std::ofstream outFile(filename);
     if (!outFile.is_open()) {
-        std::cerr << "\ncould not create file at " << filename << "\n";
+        std::cerr<<"marketFileAdd: could not create file at "<<filename<<"\n";
         return; 
     }
-    outFile << "timestamp,price,size,is_buyer_maker,asset_id,maker_id,taker_id\n";
+    outFile<<"timestamp,price,size,is_buyer_maker,asset_id,maker_id,taker_id\n";
     for(const auto& t : trades){
-        outFile << t.timestamp << "," 
-                << t.price << "," 
-                << t.size << "," 
-                << t.is_buyer_maker << ","
-                << t.asset_id << ","
-                << t.maker_id << ","
-                << t.taker_id << "\n";
+        outFile<<t.timestamp<<"," 
+               <<t.price<<"," 
+               <<t.size<<"," 
+               <<t.is_buyer_maker<<","
+               <<t.token_id<<","
+               <<t.maker_id<<","
+               <<t.taker_id<<"\n";
     }
 }
 
@@ -75,7 +71,7 @@ std::vector<TradeEvent> ManageFileData::marketFileGet(const std::string& asset_i
     
     std::ifstream file(filename);
     if(!file.is_open()){
-        std::cerr << "error: could not open file  ... ManageFileData::marketFileGet" << filename << "\n";
+        std::cerr<<"marketFileGet: could not open file"<<filename<<"\n";
         return trades;
     }
 
@@ -101,7 +97,7 @@ std::vector<TradeEvent> ManageFileData::marketFileGet(const std::string& asset_i
         row.price = std::stod(next_token());
         row.size = std::stod(next_token());
         row.is_buyer_maker = (next_token() == "1");
-        row.asset_id = next_token();
+        row.token_id = next_token();
         row.maker_id = next_token();
         row.taker_id = line.substr(start); 
         trades.push_back(std::move(row));

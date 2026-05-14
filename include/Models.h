@@ -26,7 +26,7 @@ struct TradeEvent {
     uint64_t timestamp = 0;
     double price = 0.0;
     double size = 0;
-    std::string maker_id, taker_id, asset_id;
+    std::string maker_id, taker_id, token_id;
     bool is_buyer_maker = false;
 };
 

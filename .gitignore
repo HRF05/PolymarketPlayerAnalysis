@@ -4,3 +4,6 @@ data/
 
 
 .vscode/
+
+.env
+.env.*
